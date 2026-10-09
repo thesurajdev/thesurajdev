@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/clear-hero.gif" width="100%" alt="Animated SURAJ.DEV banner. Suraj Kumar — Creative Technologist working across marketing, technology, and automation." />
+<img src="./assets/clear-hero.gif" width="100%" alt="Animated Suraj Dev banner. Suraj Dev — Creative Technologist working across marketing, technology, and automation." />
 
 <br/>
 
@@ -18,7 +18,7 @@ I turn ideas into digital experiences that are useful, discoverable, and measura
 
 ## About me
 
-Hi, I'm **Suraj Kumar** — a digital marketer and creative technologist. I combine audience-first marketing with practical web development and automation to help ideas become useful digital experiences.
+Hi, I'm **Suraj Dev** — a digital marketer and creative technologist. I combine audience-first marketing with practical web development and automation to help ideas become useful digital experiences.
 
 I care about both sides of a product: **how people discover it and how well it works once they arrive.**
 
@@ -153,6 +153,6 @@ Have an idea involving digital growth, a website, or automation? Let's talk.
 
 <div align="center">
 
-<sub>**SURAJ.DEV** · Think in systems. Build for people. Stay curious.</sub>
+<sub>**SURAJ DEV** · Think in systems. Build for people. Stay curious.</sub>
 
 </div>
