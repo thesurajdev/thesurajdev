@@ -1,144 +1,107 @@
 <div align="center">
 
-<img src="assets/hero.svg" width="100%" alt="Suraj Kumar — Creative Technologist, Marketing × Technology × Automation" />
+<img src="./assets/clear-hero.gif" width="100%" alt="Animated SURAJ.DEV banner. Suraj Kumar — Creative Technologist working across marketing, technology, and automation." />
 
 <br/>
 
-[![Creative Technologist](https://img.shields.io/badge/IDENTITY-CREATIVE_TECHNOLOGIST-22d3ee?style=for-the-badge&labelColor=080d1d)](https://github.com/thesurajdev)
-[![Marketing](https://img.shields.io/badge/FOCUS-DIGITAL_GROWTH-818cf8?style=for-the-badge&labelColor=080d1d)](https://github.com/thesurajdev?tab=repositories)
-[![Building](https://img.shields.io/badge/STATUS-ALWAYS_BUILDING-a78bfa?style=for-the-badge&labelColor=080d1d)](https://github.com/thesurajdev?tab=repositories)
+<a href="https://github.com/thesurajdev?tab=repositories"><img src="https://img.shields.io/badge/Explore_Projects-View_all_repositories-0EA5E9?style=for-the-badge&logo=github&logoColor=white&labelColor=10182C" alt="Explore projects"/></a>
+<a href="https://borntobanger.in/"><img src="https://img.shields.io/badge/Born_To_Banger-Creative_experiences-8B5CF6?style=for-the-badge&logo=rocket&logoColor=white&labelColor=10182C" alt="Born To Banger"/></a>
+<a href="https://www.instagram.com/thesurajdev/"><img src="https://img.shields.io/badge/Instagram-Connect-E4405F?style=for-the-badge&logo=instagram&logoColor=white&labelColor=10182C" alt="Instagram"/></a>
 
-### I build where **creative thinking meets measurable growth.**
+### Marketing · Web Development · Automation
 
-*Digital marketing · Web experiences · Automation · Product thinking*
-
-[EXPLORE BUILDS](https://github.com/thesurajdev?tab=repositories)　 **///**　 [CONNECT](https://www.instagram.com/thesurajdev/)　 **///**　 [PORTFOLIO](https://thesurajdev.github.io/)
+I turn ideas into digital experiences that are useful, discoverable, and measurable.
 
 </div>
 
----
+<img src="./assets/signal-divider.gif" width="100%" alt="Subtle animated cyan and violet divider"/>
+
+## About me
+
+Hi, I'm **Suraj Kumar** — a digital marketer and creative technologist. I combine audience-first marketing with practical web development and automation to help ideas become useful digital experiences.
+
+I care about both sides of a product: **how people discover it and how well it works once they arrive.**
+
+## What I do
 
 <table>
 <tr>
-<td width="58%" valign="top">
+<td width="33%" valign="top">
 
-## `01 // THE OPERATOR`
+### 📈 Digital growth
 
-I'm Suraj — a digital marketer and creative technologist interested in the space between **how people discover things and how technology makes them work**.
-
-I bring a growth mindset to building: understand the audience, solve the real problem, make the experience intuitive, and measure what improves.
+SEO, technical SEO, content strategy, paid campaigns, analytics, and conversion optimization.
 
 </td>
-<td width="42%" valign="top">
+<td width="33%" valign="top">
 
-### `SYSTEM PROFILE`
+### 💻 Web experiences
 
-```yaml
-identity: Suraj Kumar
-handle: thesurajdev
-mode: Creative Technologist
-core_loop: Think -> Build -> Measure -> Refine
-focus:
-  - Growth systems
-  - Web products
-  - Workflow automation
-```
+WordPress, Next.js, React, responsive interfaces, website strategy, and API integrations.
+
+</td>
+<td width="33%" valign="top">
+
+### ⚙️ Automation
+
+Workflows, webhooks, Google Sheets, n8n, connected tools, and AI-assisted systems.
 
 </td>
 </tr>
 </table>
 
-## `02 // CAPABILITY GRID`
-
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### <img src="https://img.shields.io/badge/01-22d3ee?style=flat-square&labelColor=0b1228" alt="01"/> GROWTH ENGINE
-
-Technical SEO · Search strategy · Content architecture · Performance marketing · Analytics · Conversion optimization
-
-</td>
-<td width="50%" valign="top">
-
-### <img src="https://img.shields.io/badge/02-818cf8?style=flat-square&labelColor=0b1228" alt="02"/> DIGITAL ENGINEERING
-
-WordPress · Next.js · React · Tailwind CSS · JavaScript · APIs · Responsive web experiences
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-### <img src="https://img.shields.io/badge/03-a78bfa?style=flat-square&labelColor=0b1228" alt="03"/> AUTOMATION LAYER
-
-Workflow automation · Webhooks · Google Sheets · n8n · Integrations · AI-assisted workflows
-
-</td>
-<td width="50%" valign="top">
-
-### <img src="https://img.shields.io/badge/04-34d399?style=flat-square&labelColor=0b1228" alt="04"/> PRODUCT THINKING
-
-Digital products · Rapid experiments · User-focused design · Systems thinking · Iteration
-
-</td>
-</tr>
-</table>
+## Tools & technologies
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=wordpress,nextjs,react,tailwind,html,css,js,ts,php,python,git,github,vercel,supabase&perline=7" alt="Technology stack icons" />
+<img src="https://skillicons.dev/icons?i=wordpress,nextjs,react,tailwind,html,css,js,ts,php,python,git,github,vercel,supabase&perline=7" alt="WordPress, Next.js, React, Tailwind CSS, HTML, CSS, JavaScript, TypeScript, PHP, Python, Git, GitHub, Vercel, and Supabase"/>
 
 </div>
 
-## `03 // SELECTED MISSIONS`
+**Marketing:** SEO · Content Strategy · Performance Marketing · Analytics  
+**Development:** WordPress · Next.js · React · Tailwind CSS · JavaScript · APIs  
+**Automation:** n8n · Webhooks · Google Sheets · AI-assisted workflows
+
+## Selected projects
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-<a href="https://thesurajdev.github.io/color-my-art/"><img src="https://img.shields.io/badge/COLOR_MY_ART-CREATIVE_EXPERIENCE-22d3ee?style=for-the-badge&labelColor=080d1d" alt="Color My Art"/></a>
+### [AI Memory MCP](https://github.com/thesurajdev/AI-Memory-MCP)
 
-**A playful digital canvas.**
+Exploring AI-native memory and connected knowledge workflows.
 
-A creative web experience from the Born To Banger ecosystem, built around accessible, interactive art.
-
-[OPEN PROJECT ↗](https://thesurajdev.github.io/color-my-art/)
+[View project →](https://github.com/thesurajdev/AI-Memory-MCP)
 
 </td>
 <td width="50%" valign="top">
 
-<a href="https://borntobanger.in/"><img src="https://img.shields.io/badge/BORN_TO_BANGER-LIVE_EXPERIENCES-a78bfa?style=for-the-badge&labelColor=080d1d" alt="Born To Banger"/></a>
+### [GMB Data Scraper](https://github.com/thesurajdev/GMB-Data-Scraper)
 
-**Ideas into real-world experiences.**
+Tools for local-business research and data workflows.
 
-An events and activities brand connecting people with artists, workshops, and memorable experiences.
-
-[EXPLORE BTB ↗](https://borntobanger.in/)
+[View project →](https://github.com/thesurajdev/GMB-Data-Scraper)
 
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
 
-<a href="https://github.com/thesurajdev/GMB-Data-Scraper"><img src="https://img.shields.io/badge/GMB_DATA_SCRAPER-RESEARCH_TOOL-34d399?style=for-the-badge&labelColor=080d1d" alt="GMB Data Scraper"/></a>
+### [Occasion Radar](https://github.com/thesurajdev/occasion-radar-extension)
 
-**Structured local-search research.**
+A browser extension project focused on event and occasion discovery.
 
-A repository focused on Google Business Profile data collection and local-search workflows.
-
-[VIEW REPOSITORY ↗](https://github.com/thesurajdev/GMB-Data-Scraper)
+[View project →](https://github.com/thesurajdev/occasion-radar-extension)
 
 </td>
 <td width="50%" valign="top">
 
-<a href="https://github.com/thesurajdev/AI-Memory-MCP"><img src="https://img.shields.io/badge/AI_MEMORY_MCP-CONTEXT_SYSTEM-818cf8?style=for-the-badge&labelColor=080d1d" alt="AI Memory MCP"/></a>
+### [Color My Art](https://thesurajdev.github.io/color-my-art/)
 
-**Exploring connected AI systems.**
+An interactive creative experience for the Born To Banger ecosystem.
 
-A project exploring memory and context infrastructure for AI-powered workflows.
-
-[VIEW REPOSITORY ↗](https://github.com/thesurajdev/AI-Memory-MCP)
+[Launch experience →](https://thesurajdev.github.io/color-my-art/)
 
 </td>
 </tr>
@@ -146,43 +109,50 @@ A project exploring memory and context infrastructure for AI-powered workflows.
 
 <div align="center">
 
-[![All repositories](https://img.shields.io/badge/ALL_PROJECTS-ENTER_THE_LAB-22d3ee?style=for-the-badge&labelColor=080d1d)](https://github.com/thesurajdev?tab=repositories)
+<a href="https://borntobanger.in/"><img src="https://img.shields.io/badge/Born_To_Banger-Visit_website-8B5CF6?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=10182C" alt="Visit Born To Banger"/></a>
+<a href="https://github.com/thesurajdev?tab=repositories"><img src="https://img.shields.io/badge/All_projects-Explore_GitHub-0EA5E9?style=for-the-badge&logo=github&logoColor=white&labelColor=10182C" alt="Explore all GitHub projects"/></a>
 
 </div>
 
-## `04 // BUILD TELEMETRY`
+<img src="./assets/signal-divider.gif" width="100%" alt="Subtle animated cyan and violet divider"/>
+
+## GitHub activity
+
+These cards are generated from public GitHub activity. If an external stats service is temporarily unavailable, your projects and profile links above will still work.
 
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=thesurajdev&show_icons=true&hide_border=true&bg_color=080d1d&title_color=22d3ee&icon_color=a78bfa&text_color=cbd5e1&ring_color=818cf8" alt="GitHub profile statistics" />
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=thesurajdev&layout=compact&hide_border=true&bg_color=080d1d&title_color=22d3ee&text_color=cbd5e1" alt="Most used languages on GitHub" />
-
-<img src="https://streak-stats.demolab.com?user=thesurajdev&hide_border=true&background=080d1d&ring=22d3ee&fire=a78bfa&currStreakLabel=22d3ee&sideLabels=cbd5e1&currStreakNum=f8fafc&sideNums=f8fafc&dates=64748b" alt="GitHub contribution streak" />
-
-</div>
-
-<sub><b>Telemetry note:</b> These cards are served by external services and may occasionally be unavailable or take time to refresh.</sub>
-
-## `05 // PRIME DIRECTIVE`
-
-> **Make it useful. Make it discoverable. Make it better.**
-
-I believe the strongest digital experiences combine creative direction, sound engineering, and measurable outcomes. The goal is not to add more technology; it is to remove friction between a good idea and the person it is meant to help.
-
-## `06 // OPEN CHANNEL`
-
-Have a challenge involving digital growth, a website, automation, or a new product idea? Let's connect the dots and build something meaningful.
-
-<div align="center">
-
-[![GitHub](https://img.shields.io/badge/GITHUB-EXPLORE_BUILDS-f8fafc?style=for-the-badge&logo=github&logoColor=white&labelColor=080d1d)](https://github.com/thesurajdev?tab=repositories)
-[![Instagram](https://img.shields.io/badge/INSTAGRAM-FOLLOW_THE_JOURNEY-ec4899?style=for-the-badge&logo=instagram&logoColor=white&labelColor=080d1d)](https://www.instagram.com/thesurajdev/)
-[![Portfolio](https://img.shields.io/badge/PORTFOLIO-ENTER_THE_LAB-22d3ee?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=080d1d)](https://thesurajdev.github.io/)
+<img height="165" src="https://github-readme-stats.vercel.app/api?username=thesurajdev&show_icons=true&hide_border=true&bg_color=080D1C&title_color=67E8F9&text_color=E2E8F0&icon_color=A78BFA" alt="GitHub overview statistics for thesurajdev"/>
+<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=thesurajdev&layout=compact&hide_border=true&bg_color=080D1C&title_color=67E8F9&text_color=E2E8F0&langs_count=6" alt="Most-used public repository languages"/>
 
 <br/>
 
-<img src="assets/footer.svg" width="100%" alt="End of transmission — Digital Lab" />
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=thesurajdev&bg_color=080D1C&color=67E8F9&line=8B5CF6&point=FFFFFF&area=true&hide_border=true&custom_title=Contribution%20Activity" width="98%" alt="GitHub contribution activity graph"/>
 
-<sub>THINK IN SYSTEMS // BUILD FOR PEOPLE // STAY CURIOUS</sub>
+</div>
+
+## How I build
+
+- **Start with people:** understand the problem before choosing the tools.
+- **Make it clear:** keep the experience understandable and easy to use.
+- **Measure and improve:** learn from outcomes and keep iterating.
+
+## Let's connect
+
+Have an idea involving digital growth, a website, or automation? Let's talk.
+
+<div align="center">
+
+<a href="https://github.com/thesurajdev"><img src="https://img.shields.io/badge/GitHub-Explore_my_work-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub profile"/></a>
+<a href="https://www.instagram.com/thesurajdev/"><img src="https://img.shields.io/badge/Instagram-Connect-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram"/></a>
+<a href="https://thesurajdev.github.io/"><img src="https://img.shields.io/badge/Portfolio-Visit_website-0EA5E9?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Portfolio"/></a>
+
+</div>
+
+<img src="./assets/signal-divider.gif" width="100%" alt="Subtle animated cyan and violet divider"/>
+
+<div align="center">
+
+<sub>**SURAJ.DEV** · Think in systems. Build for people. Stay curious.</sub>
 
 </div>
