@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f4">
+  <meta name="description" content="DraftGuard helps recover supported website text drafts after a reload or lost tab. Drafts stay in your browser profile.">
+  <meta property="og:title" content="DraftGuard — Never Lose Text">
+  <meta property="og:description" content="Your words should survive a page refresh. A local-first Chrome extension for recovering unsent drafts.">
+  <meta property="og:type" content="website">
+  <title>DraftGuard — Never Lose Text</title>
+  <style>
+    :root {
+      --paper: #f7f7f4;
+      --surface: #fff;
+      --ink: #242721;
+      --muted: #6f746b;
+      --line: #dedfd7;
+      --green: #276749;
+      --green-dark: #1d5239;
+      --green-soft: #e9f1e9;
+      --amber: #805a21;
+      --amber-soft: #faf1dd;
+      --shadow: 0 20px 60px rgba(31, 39, 30, .08);
+      --radius: 20px;
+      --max: 1080px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 86px; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+    button, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 3px solid #83aa8e; outline-offset: 3px; }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+    .site-header { position: sticky; top: 0; z-index: 10; background: rgba(247,247,244,.88); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(222,223,215,.8); }
+    .nav { min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: -.035em; text-decoration: none; }
+    .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: white; background: var(--green); }
+    .brand-name { font-size: 18px; }
+    .nav-links { display: flex; align-items: center; gap: 26px; color: var(--muted); font-size: 14px; }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover, .text-link:hover { color: var(--green); }
+    .nav-cta, .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; border: 1px solid var(--green); border-radius: 999px; padding: 11px 18px; background: var(--green); color: white; text-decoration: none; font-size: 14px; font-weight: 650; transition: transform .18s ease, background .18s ease, border-color .18s ease; cursor: pointer; }
+    .nav-cta:hover, .button:hover { background: var(--green-dark); border-color: var(--green-dark); transform: translateY(-1px); }
+    .button.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+    .button.secondary:hover { background: white; border-color: #b8bcb0; }
+    .hero { display: grid; grid-template-columns: 1.03fr .97fr; align-items: center; gap: clamp(38px, 7vw, 86px); padding: 88px 0 90px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; padding: 6px 11px; border: 1px solid #d5e3d4; border-radius: 999px; background: #eef4ed; color: var(--green-dark); font-size: 12px; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; }
+    .eyebrow-dot { width: 7px; height: 7px; background: #4d8c61; border-radius: 50%; box-shadow: 0 0 0 3px #d8e9d9; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 630px; margin: 22px 0 22px; font-size: clamp(43px, 5.7vw, 69px); line-height: 1.045; letter-spacing: -.067em; font-weight: 680; }
+    .hero-copy { max-width: 530px; color: #575d54; font-size: 18px; line-height: 1.72; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 28px; }
+    .microcopy { margin: 15px 0 0; color: var(--muted); font-size: 12px; }
+    .product-window { position: relative; padding: 15px; border: 1px solid #e0e2da; border-radius: 25px; background: #eceee7; box-shadow: var(--shadow); transform: rotate(.7deg); }
+    .window-top { display: flex; align-items: center; gap: 7px; padding: 3px 5px 14px; color: #777e73; font-size: 11px; }
+    .window-dot { width: 7px; height: 7px; border-radius: 50%; background: #c4c8be; }
+    .window-label { margin-left: 8px; }
+    .fake-page { min-height: 350px; padding: 23px; border: 1px solid #e2e4dd; border-radius: 15px; background: #fff; }
+    .fake-page-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 17px; border-bottom: 1px solid #eceee9; }
+    .fake-brand { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 750; }
+    .fake-brand-icon { display: grid; place-items: center; width: 25px; height: 25px; background: #f0f3ed; color: var(--green); border-radius: 7px; }
+    .fake-tag { padding: 4px 8px; border-radius: 999px; background: #f3f3ef; color: #777c72; font-size: 10px; }
+    .fake-heading { margin: 21px 0 4px; font-size: 18px; font-weight: 650; letter-spacing: -.035em; }
+    .fake-caption { margin-bottom: 14px; color: #83877f; font-size: 11px; }
+    .fake-field-label { display: block; margin: 15px 0 6px; font-size: 11px; color: #686d64; font-weight: 650; }
+    .fake-input { width: 100%; min-height: 38px; border: 1px solid #e1e3dc; border-radius: 8px; padding: 9px 10px; background: #fcfcfa; color: #4b5048; font-size: 11px; }
+    .fake-input.description { min-height: 92px; line-height: 1.6; resize: vertical; }
+    .saved-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 13px; color: #6f766b; font-size: 10px; }
+    .saved-pill { display: inline-flex; align-items: center; gap: 5px; color: var(--green); }
+    .saved-pill svg { width: 12px; height: 12px; }
+    .recovery-card { position: absolute; right: -22px; bottom: 32px; width: min(290px, 77%); padding: 16px; border: 1px solid #dfe6dc; border-radius: 16px; background: #fff; box-shadow: 0 16px 45px rgba(24,47,28,.16); transform: rotate(-1.2deg); }
+    .recovery-top { display: flex; align-items: flex-start; gap: 10px; }
+    .recovery-icon { flex: 0 0 34px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; background: var(--green-soft); color: var(--green); }
+    .recovery-title { margin: 0 0 2px; font-size: 13px; font-weight: 750; }
+    .recovery-sub { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .recovery-actions { display: flex; gap: 8px; margin-top: 13px; }
+    .mini-button { border: 0; border-radius: 8px; padding: 7px 10px; background: var(--green); color: white; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .mini-button.light { background: #f2f3ee; color: #4d5449; }
+    .section { padding: 86px 0; border-top: 1px solid var(--line); }
+    .section-head { max-width: 650px; margin-bottom: 38px; }
+    .section-kicker { margin-bottom: 10px; color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: .11em; text-transform: uppercase; }
+    h2 { margin-bottom: 14px; font-size: clamp(30px, 4vw, 43px); line-height: 1.12; letter-spacing: -.055em; font-weight: 650; }
+    .section-intro { max-width: 620px; margin-bottom: 0; color: var(--muted); font-size: 16px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .step { padding: 23px 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.52); }
+    .step-no { display: grid; place-items: center; width: 35px; height: 35px; margin-bottom: 22px; border-radius: 11px; background: var(--green-soft); color: var(--green); font-size: 12px; font-weight: 800; }
+    h3 { margin-bottom: 8px; font-size: 18px; letter-spacing: -.03em; line-height: 1.35; }
+    .step p, .feature p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .feature-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 17px; border: 1px solid #dce7d9; border-radius: 13px; background: #eff5ed; color: var(--green); }
+    .feature-icon svg { width: 20px; height: 20px; }
+    .split { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: start; }
+    .privacy-panel { padding: 26px; border: 1px solid #d9e3d6; border-radius: var(--radius); background: #eef3eb; }
+    .privacy-panel h3 { display: flex; align-items: center; gap: 10px; }
+    .privacy-panel ul { list-style: none; margin: 18px 0 0; padding: 0; }
+    .privacy-panel li { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-top: 1px solid #dce5d8; color: #50584d; font-size: 14px; }
+    .privacy-panel li svg { flex: 0 0 17px; width: 17px; height: 17px; margin-top: 3px; color: var(--green); }
+    .plain-list { display: grid; gap: 20px; }
+    .plain-item { display: grid; grid-template-columns: 26px 1fr; gap: 11px; }
+    .plain-item .num { color: var(--green); font-size: 12px; font-weight: 800; padding-top: 2px; }
+    .plain-item h3 { margin-bottom: 5px; font-size: 16px; }
+    .plain-item p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+    .truth-section { background: #f0f0eb; }
+    .truth-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .truth-card { padding: 21px; border: 1px solid #dddfd6; border-radius: 15px; background: rgba(255,255,255,.56); }
+    .truth-card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .truth-card h3 { font-size: 16px; }
+    .demo-wrap { display: grid; grid-template-columns: 1fr .88fr; gap: 36px; align-items: center; }
+    .demo-card { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; box-shadow: 0 12px 35px rgba(31,39,30,.04); }
+    .demo-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .demo-header strong { font-size: 14px; }
+    .demo-chip { border-radius: 999px; padding: 4px 8px; background: var(--green-soft); color: var(--green); font-size: 10px; font-weight: 750; }
+    .demo-card textarea { width: 100%; min-height: 134px; padding: 13px; border: 1px solid #dfe2d9; border-radius: 11px; color: var(--ink); background: #fcfcfa; resize: vertical; font-size: 13px; line-height: 1.6; }
+    .demo-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 13px; }
+    .demo-status { color: var(--muted); font-size: 11px; }
+    .demo-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    .demo-buttons button { padding: 8px 11px; border-radius: 9px; border: 1px solid var(--line); background: white; color: var(--ink); font-size: 11px; font-weight: 700; cursor: pointer; }
+    .demo-buttons button.primary { border-color: var(--green); background: var(--green); color: white; }
+    .demo-note { margin: 12px 0 0; color: #8a8e85; font-size: 10px; }
+    .notice { display: none; margin-top: 13px; padding: 13px; border: 1px solid #d5e3d1; border-radius: 11px; background: #eef5eb; }
+    .notice.visible { display: block; }
+    .notice p { margin: 0 0 9px; font-size: 12px; font-weight: 700; }
+    .notice button { padding: 7px 10px; border: 0; border-radius: 8px; background: var(--green); color: white; font-size: 11px; font-weight: 750; cursor: pointer; }
+    .faq-list { max-width: 780px; border-top: 1px solid var(--line); }
+    details { padding: 19px 0; border-bottom: 1px solid var(--line); }
+    summary { display: flex; justify-content: space-between; gap: 20px; align-items: center; cursor: pointer; list-style: none; font-size: 15px; font-weight: 650; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--green); font-size: 23px; font-weight: 400; }
+    details[open] summary::after { content: "−"; }
+    details p { max-width: 690px; margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+    .footer { padding: 25px 0 32px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .footer a { text-decoration: none; }
+    .footer-links { display: flex; gap: 18px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 850px) {
+      .hero { grid-template-columns: 1fr; padding: 64px 0 74px; gap: 48px; }
+      .hero-copy { max-width: 620px; }
+      .product-window { max-width: 560px; width: 100%; margin: 0 auto; transform: none; }
+      .recovery-card { right: -8px; }
+      .split, .demo-wrap { grid-template-columns: 1fr; gap: 32px; }
+    }
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 30px, var(--max)); }
+      .nav { min-height: 66px; }
+      .brand-name { font-size: 16px; }
+      .nav-links { gap: 14px; }
+      .nav-links .nav-secondary { display: none; }
+      .nav-cta { padding: 9px 12px; font-size: 12px; }
+      h1 { font-size: clamp(42px, 12.5vw, 60px); }
+      .hero { padding: 50px 0 60px; }
+      .hero-copy { font-size: 16px; }
+      .section { padding: 65px 0; }
+      .steps, .features, .truth-grid { grid-template-columns: 1fr; }
+      .step { padding: 20px; }
+      .step-no { margin-bottom: 15px; }
+      .fake-page { min-height: auto; padding: 17px; }
+      .recovery-card { right: -3px; bottom: 15px; }
+      .product-window { padding: 10px; }
+      .hero-actions .button { flex: 1 1 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+
+    /* Full privacy policy modal: all policy content remains on this single page. */
+    body.policy-open { overflow: hidden; }
+    .policy-link { border: 0; padding: 0; background: transparent; color: var(--green); cursor: pointer; font: inherit; font-weight: 650; text-align: left; }
+    .policy-link:hover, .footer-policy-link:hover { color: var(--green-dark); text-decoration: underline; }
+    .footer-policy-link { border: 0; padding: 0; background: none; color: inherit; cursor: pointer; font: inherit; }
+    .policy-modal[hidden] { display: none !important; }
+    .policy-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 18px; }
+    .policy-backdrop { position: absolute; inset: 0; background: rgba(24, 29, 24, .58); backdrop-filter: blur(4px); }
+    .policy-dialog { position: relative; display: flex; flex-direction: column; width: min(960px, 100%); max-height: min(900px, 90vh); overflow: hidden; border: 1px solid #dfe2d9; border-radius: 20px; background: #fbfbf8; box-shadow: 0 24px 90px rgba(10, 20, 12, .28); outline: none; }
+    .policy-modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 23px 28px 20px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.9); }
+    .policy-modal-heading { min-width: 0; }
+    .policy-modal-header .section-kicker { margin: 0 0 6px; }
+    .policy-modal-header h2 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 32px); }
+    .policy-modal-lead { max-width: 720px; margin: 0; color: var(--muted); font-size: 14px; }
+    .policy-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 13px; color: var(--muted); font-size: 11px; }
+    .policy-meta span { padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+    .policy-close { flex: 0 0 38px; display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); cursor: pointer; font-size: 25px; line-height: 1; }
+    .policy-close:hover { background: #f0f2ec; }
+    .policy-modal-body { overflow: auto; overscroll-behavior: contain; padding: 22px 28px 34px; }
+    .policy-toc { margin: 0 0 26px; padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.72); }
+    .policy-toc strong { display: block; margin-bottom: 10px; font-size: 12px; }
+    .policy-toc-links { display: flex; flex-wrap: wrap; gap: 7px; }
+    .policy-toc-links a { display: inline-flex; align-items: center; padding: 5px 9px; border: 1px solid #e2e4dd; border-radius: 999px; color: var(--muted); text-decoration: none; font-size: 11px; }
+    .policy-toc-links a:hover { color: var(--green); border-color: #c4d6c1; background: #f1f6ef; }
+    .policy-content { min-width: 0; }
+    .policy-content .summary-box { padding: 18px 20px; border: 1px solid #d8e4d4; border-radius: 15px; background: #eef3eb; margin: 0 0 28px; }
+    .policy-content .summary-box strong { display: block; margin-bottom: 5px; }
+    .policy-content .summary-box p { margin: 0; color: #50584d; font-size: 14px; }
+    .policy-content .policy-section { padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid var(--line); scroll-margin-top: 12px; }
+    .policy-content .policy-section:last-of-type { border-bottom: 0; }
+    .policy-content .policy-section h2 { margin: 0 0 10px; font-size: 21px; line-height: 1.25; letter-spacing: -.04em; }
+    .policy-content .policy-section p { margin: 0 0 11px; color: #565c53; font-size: 14px; }
+    .policy-content .policy-section ul { margin: 8px 0 13px; padding-left: 22px; color: #565c53; font-size: 14px; }
+    .policy-content .policy-section li { padding: 3px 0; }
+    .policy-content .callout { padding: 14px 16px; border-left: 3px solid #b48a2a; background: #fbf4e5; color: #66522a; font-size: 13px; }
+    .policy-content a { color: var(--green-dark); text-underline-offset: 3px; }
+    .policy-content code { padding: 2px 5px; border-radius: 5px; background: #eceee8; font-size: .9em; }
+    .policy-final-note { color: var(--muted); font-size: 12px; }
+    @media (max-width: 620px) {
+      .policy-modal { padding: 8px; }
+      .policy-dialog { max-height: 94vh; border-radius: 15px; }
+      .policy-modal-header { padding: 18px 17px 15px; gap: 12px; }
+      .policy-modal-body { padding: 16px 17px 25px; }
+      .policy-modal-header .section-kicker { font-size: 10px; }
+      .policy-modal-header h2 { font-size: 23px; }
+      .policy-modal-lead { font-size: 13px; }
+      .policy-meta { font-size: 10px; }
+      .policy-close { width: 34px; height: 34px; flex-basis: 34px; }
+      .policy-toc-links { gap: 6px; }
+      .policy-toc-links a { font-size: 10px; }
+      .policy-content .policy-section h2 { font-size: 19px; }
+    }
+
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="DraftGuard home">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 2.7 19 5.4v5.8c0 4.7-3 8.2-7 10.1-4-1.9-7-5.4-7-10.1V5.4l7-2.7Z" stroke="currentColor" stroke-width="1.7"/><path d="m8.4 12.1 2.3 2.3 4.9-5.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="brand-name">DraftGuard</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a class="nav-secondary" href="#how-it-works">How it works</a>
+        <a class="nav-secondary" href="#privacy">Privacy</a>
+        <a class="nav-cta" href="#demo">Try the demo <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="wrap hero" aria-labelledby="hero-title">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> A small Chrome extension</div>
+        <h1 id="hero-title">Your words should survive a page refresh.</h1>
+        <p class="hero-copy">DraftGuard helps recover text you were writing when a page reloads, a tab goes missing, or a session expires. It quietly saves supported drafts on your device, so a frustrating restart doesn't have to mean starting over.</p>
+        <div class="hero-actions">
+          <a class="button" href="#demo">Try the demo <span aria-hidden="true">→</span></a>
+          <button class="button secondary" type="button" data-open-policy>Privacy policy</button>
+        </div>
+        <p class="microcopy">No account. No cloud sync. No paid API. Your drafts stay in your Chrome profile.</p>
+      </div>
+
+      <div class="product-window" aria-label="Illustration of DraftGuard detecting a saved draft">
+        <div class="window-top"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span><span class="window-label">support.example.com · New ticket</span></div>
+        <div class="fake-page">
+          <div class="fake-page-head"><div class="fake-brand"><span class="fake-brand-icon">✳</span> Help Center</div><span class="fake-tag">New request</span></div>
+          <div class="fake-heading">Tell us what happened</div>
+          <div class="fake-caption">Add a few details and our team will take a look.</div>
+          <label class="fake-field-label" for="hero-fake-subject">Subject</label>
+          <input class="fake-input" id="hero-fake-subject" value="Issue with my submission" readonly>
+          <label class="fake-field-label" for="hero-fake-body">Description</label>
+          <textarea class="fake-input description" id="hero-fake-body" readonly>I tried to submit the form, but the page timed out before I could finish. I was explaining the steps I took when...</textarea>
+          <div class="saved-status"><span>Draft in progress</span><span class="saved-pill"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Saved locally · just now</span></div>
+        </div>
+        <div class="recovery-card">
+          <div class="recovery-top"><div class="recovery-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M3.5 11a8.5 8.5 0 1 1 2.8 6.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3.5 5.8V11h5.2M12 7.2v5l3.2 1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><p class="recovery-title">A draft was found</p><p class="recovery-sub">Your unsent text may still be here. Want to put it back?</p></div></div>
+          <div class="recovery-actions"><button class="mini-button" type="button" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'}); document.getElementById('simulate-loss').focus();">See recovery demo</button><button class="mini-button light" type="button" onclick="this.closest('.recovery-card').style.display='none'">Dismiss</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">How it works</p>
+          <h2>A little backup for the moments the web forgets.</h2>
+          <p class="section-intro">DraftGuard stays out of your way until you need it. You keep writing; it keeps a local copy of supported text fields.</p>
+        </div>
+        <div class="steps">
+          <article class="step"><div class="step-no">01</div><h3>Write like you normally do</h3><p>Type into a supported text field, textarea, or compatible editable area. DraftGuard saves after a short pause.</p></article>
+          <article class="step"><div class="step-no">02</div><h3>A page goes wrong</h3><p>A refresh, closed tab, or expired session can happen. When you return, DraftGuard checks for a matching saved draft.</p></article>
+          <article class="step"><div class="step-no">03</div><h3>Review and restore</h3><p>Choose whether to restore or discard the draft. You stay in control of what goes back into the page.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">Small by design</p>
+          <h2>Made for the text you don't want to lose.</h2>
+        </div>
+        <div class="features">
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.5h11l3 3V20H5V4.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 4.5v5h8v-5M8 20v-6h8v6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div><h3>Quiet autosave</h3><p>Drafts are saved locally as you type, with no account setup and no separate save button to remember.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.4 5.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 5.5V12h6.5M12 7.5v5l3.2 1.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>A draft vault</h3><p>Search saved drafts, copy their text, revisit the source page, export a backup, or delete them when you're done.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 19 6v5.4c0 4.1-2.7 7.6-7 9.6-4.3-2-7-5.5-7-9.6V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m8.5 12.2 2.2 2.1 4.8-4.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>You stay in control</h3><p>Pause autosave, exclude websites, choose a retention period, and remove stored drafts from the vault.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="privacy">
+      <div class="wrap split">
+        <div>
+          <p class="section-kicker">Privacy, plainly</p>
+          <h2>We don't run a server that receives your drafts.</h2>
+          <p class="section-intro">DraftGuard is designed to keep draft text inside your browser profile. There is no DraftGuard account, cloud inbox, analytics service, or external API in this build.</p>
+          <p style="margin-top:20px;color:var(--muted);font-size:14px;">To autosave across websites, Chrome asks you to grant site access. DraftGuard uses that access to detect supported fields and restore drafts—not to upload your writing.</p>
+          <p style="margin-top:18px;"><button class="text-link policy-link" type="button" data-open-policy>Read the full Privacy Policy <span aria-hidden="true">→</span></button></p>
+        </div>
+        <div class="privacy-panel">
+          <h3><svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M12 3 19 6v5.4c0 4.1-2.7 7.6-7 9.6-4.3-2-7-5.5-7-9.6V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m8.5 12.2 2.2 2.1 4.8-4.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> What that means</h3>
+          <ul>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Draft text is stored in Chrome's local extension storage.</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Query strings and URL fragments are not saved with draft records.</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>You can pause protection, exclude a site, or delete drafts.</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>No account, server-side draft database, telemetry, or advertising scripts.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section truth-section" id="limits">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">What it isn't</p>
+          <h2>A useful safety net, not a promise that nothing can go wrong.</h2>
+          <p class="section-intro">Being clear about the limits is part of building something you can trust.</p>
+        </div>
+        <div class="truth-grid">
+          <article class="truth-card"><h3>Not an encrypted vault</h3><p>Drafts are stored in Chrome local extension storage and are not encrypted by DraftGuard. Avoid highly confidential information and shared computers.</p></article>
+          <article class="truth-card"><h3>Not every editor works</h3><p>Standard text fields and textareas are the most reliable. Some embedded frames, custom editors, or complex web apps may behave differently.</p></article>
+          <article class="truth-card"><h3>Not a replacement for autosave</h3><p>DraftGuard is best-effort recovery. Review restored text before submitting, and use a site's own save or draft feature when available.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demo">
+      <div class="wrap demo-wrap">
+        <div>
+          <p class="section-kicker">Try a tiny demo</p>
+          <h2>See the recovery idea in action.</h2>
+          <p class="section-intro">Write something, simulate losing the page, then restore the text. This demo runs only on this landing page; it does not connect to the installed extension or store anything on a server.</p>
+        </div>
+        <div class="demo-card">
+          <div class="demo-header"><strong>Untitled draft</strong><span class="demo-chip" id="demo-chip">Saved in demo</span></div>
+          <label class="sr-only" for="demo-text">Type a sample draft</label>
+          <textarea id="demo-text" placeholder="Try writing a few sentences here…">I was writing a detailed message when the page refreshed. I don't want to type it all over again.</textarea>
+          <div class="demo-footer"><span class="demo-status" id="demo-status" aria-live="polite">Draft is ready to test.</span><div class="demo-buttons"><button id="simulate-loss" class="primary" type="button">Simulate page loss</button><button id="reset-demo" type="button">Reset</button></div></div>
+          <div class="notice" id="restore-notice" role="status"><p>A saved draft was found in this demo.</p><button id="restore-demo" type="button">Restore draft</button> <button id="discard-demo" type="button" style="margin-left:5px;background:#e9ebe5;color:#41463e;">Discard</button></div>
+          <p class="demo-note">Illustrative demo only. Your text stays in this page's temporary JavaScript state.</p>
+        </div>
+      </div>
+    </section>
+
+<section class="section" id="faq">
+      <div class="wrap">
+        <div class="section-head"><p class="section-kicker">Questions, answered</p><h2>Before you install.</h2></div>
+        <div class="faq-list">
+          <details><summary>Does DraftGuard upload my text?</summary><p>No. The current build stores drafts in Chrome local extension storage and does not include a DraftGuard server, analytics, or external API calls. It does store draft text and limited page/field metadata locally.</p></details>
+          <details><summary>Will it recover every kind of text?</summary><p>No. It works best with standard text inputs and textareas. Some custom rich-text editors, embedded frames, and complex single-page applications may not restore perfectly. Rich-text formatting may be lost.</p></details>
+          <details><summary>Can I stop it from saving on a website?</summary><p>Yes. You can pause protection globally or add specific websites to the exclusion list in the extension settings.</p></details>
+          <details><summary>Does it save passwords or payment details?</summary><p>DraftGuard skips common password, authentication, and payment fields and uses other heuristics to avoid sensitive areas. No detector is perfect, so don't use it for highly confidential information.</p></details>
+          <details><summary>How long are drafts kept?</summary><p>You can choose a retention period in the settings. Expired drafts are cleaned up automatically, and you can delete individual drafts or clear them from the vault.</p></details>
+        </div>
+      </div>
+    </section>
+
+</main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>© <span id="year">2026</span> DraftGuard · A small, independent browser tool.</div>
+      <div class="footer-links"><button class="footer-policy-link" type="button" data-open-policy>Privacy policy</button><a href="#faq">FAQ</a><a href="#top">Back to top ↑</a></div>
+    </div>
+  </footer>
+
+
+  <!-- Full privacy policy is embedded in this page and shown in an accessible modal. -->
+  <div class="policy-modal" id="privacy-modal" hidden>
+    <div class="policy-backdrop" data-close-policy aria-hidden="true"></div>
+    <section class="policy-dialog" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title" aria-describedby="privacy-modal-description" tabindex="-1">
+      <header class="policy-modal-header">
+        <div class="policy-modal-heading">
+          <p class="section-kicker">Privacy &amp; data practices</p>
+          <h2 id="privacy-modal-title">DraftGuard Privacy Policy</h2>
+          <p class="policy-modal-lead" id="privacy-modal-description">What DraftGuard stores, why it needs website access, and how you can manage or delete saved drafts.</p>
+          <div class="policy-meta"><span>Effective date: October 14, 2026</span><span>Last updated: October 14, 2026</span><span>Applies to: DraftGuard for Chrome</span></div>
+        </div>
+        <button class="policy-close" type="button" id="close-policy" aria-label="Close privacy policy">×</button>
+      </header>
+      <div class="policy-modal-body" id="policy-modal-body">
+        <nav class="policy-toc" aria-label="Privacy policy contents">
+          <strong>On this page</strong>
+          <div class="policy-toc-links">
+            <a href="#policy-overview">At a glance</a><a href="#policy-data">Data handled</a><a href="#policy-purpose">How data is used</a><a href="#policy-permissions">Website permissions</a><a href="#policy-sensitive">Sensitive information</a><a href="#policy-storage">Storage and security</a><a href="#policy-retention">Retention and deletion</a><a href="#policy-sharing">Sharing and third parties</a><a href="#policy-website">Website and demo</a><a href="#policy-rights">Your choices</a><a href="#policy-changes">Policy changes</a><a href="#policy-contact">Contact</a>
+          </div>
+        </nav>
+        <article class="policy-content">
+          
+<div class="summary-box" id="policy-overview"><strong>The short version</strong><p>DraftGuard is designed to keep saved drafts in Chrome's local extension storage on your device. The packaged extension does not include an account system, a DraftGuard server, analytics, advertising trackers, or external API calls. Text you type can still be collected separately by the website you are using, according to that website's own behavior and policies.</p></div>
+<section class="policy-section" id="policy-data"><h2>1. Information DraftGuard handles</h2><p>When protection is enabled, DraftGuard detects supported text fields on HTTP and HTTPS webpages. When you type into a supported field, it may save:</p><ul><li><strong>Draft content:</strong> text from supported text inputs, search inputs, textareas, and enabled content-editable areas. Each saved field is limited to 100,000 characters.</li><li><strong>Draft metadata:</strong> save time, website hostname, page title, page URL path, field label, editor type, and a field signature used to identify the field when offering recovery.</li><li><strong>Preferences:</strong> whether protection is enabled, the retention period, whether content-editable areas are included, and your excluded-domain list.</li></ul><p>Stored page URLs omit query strings and fragments. They contain the page's origin and path, which can still reveal information about the page you visited. The field signature may contain attributes such as an element's name, ID, placeholder, or accessible label when present.</p><p>DraftGuard does not intentionally collect general browsing history. It accesses a page to identify supported text fields and save or restore text associated with those fields.</p></section>
+<section class="policy-section" id="policy-purpose"><h2>2. How the information is used</h2><p>The extension uses locally stored text and metadata only to provide its core features: autosaving supported drafts, matching a saved draft to a page and field, displaying recovery options, searching and managing saved drafts, exporting a backup when you request it, applying your settings, and removing expired or deleted drafts.</p><p>DraftGuard does not use draft content for advertising, profiling, credit decisions, or AI training.</p></section>
+<section class="policy-section" id="policy-permissions"><h2>3. Website access and permissions</h2><p>DraftGuard requests access to HTTP and HTTPS websites so that its content script can detect supported fields and offer recovery on the websites where you use it. The extension also uses Chrome's local storage to keep drafts and preferences and Chrome's alarm facility to schedule periodic cleanup of expired drafts.</p><p>You can disable protection globally or exclude individual domains from the extension's settings. If you do not grant the required website access, autosave and recovery will not work on sites the extension cannot access.</p></section>
+<section class="policy-section" id="policy-sensitive"><h2>4. Sensitive information and limitations</h2><p>DraftGuard attempts to avoid common credential, authentication, payment, and other fields identified by their field type, name, label, or related attributes. It also avoids fields in forms that contain password inputs and has default exclusions for selected sign-in or payment-related domains.</p><div class="callout"><strong>Important:</strong> these safeguards are based on field metadata and rules; they cannot identify every sensitive field or sensitive value. DraftGuard may save personal, confidential, or otherwise sensitive text if it is entered into a field that passes those checks. Do not rely on DraftGuard for passwords, payment information, health information, private messages, or highly confidential material.</div></section>
+<section class="policy-section" id="policy-storage"><h2>5. Local storage and security</h2><p>Drafts and preferences are stored using <code>chrome.storage.local</code> in the browser's extension storage area. DraftGuard does not encrypt these records itself. Anyone who can access your unlocked browser profile or device may be able to access locally stored extension data. Keep your device and browser profile secure, and avoid using this tool on shared or untrusted computers.</p><p>The extension has a local cap of 500 saved drafts to limit storage growth. You can export a JSON backup through the extension's interface; any exported file becomes subject to the storage and security controls of the location where you save it.</p></section>
+<section class="policy-section" id="policy-retention"><h2>6. Retention and deletion</h2><p>You can select an automatic retention period of 1, 7, 14, or 30 days. DraftGuard periodically removes expired drafts and also limits the vault to the 500 most recently updated records. Empty fields may have their associated draft removed during cleanup or subsequent editing.</p><p>You can delete individual drafts or clear saved drafts using the extension interface. You can also pause protection or exclude a website to stop new drafts from being saved there. Exported JSON backups are not automatically deleted by DraftGuard; you must remove those files yourself.</p><p>Uninstalling the extension or removing your Chrome profile may affect or remove its locally stored data. Export any drafts you need to keep before uninstalling.</p></section>
+<section class="policy-section" id="policy-sharing"><h2>7. Sharing and third parties</h2><p>The packaged DraftGuard extension does not contain a DraftGuard backend, analytics SDK, advertising service, AI integration, or external API call that uploads saved draft content. DraftGuard does not sell or transfer saved drafts to a third party.</p><p>Chrome and your operating system manage the local browser profile and its storage. If you export a draft and choose to share or upload that exported file, you control that action and the recipient's subsequent use of the file.</p><p>DraftGuard cannot prevent the website itself from transmitting text you type into its page. A website may autosave, process, or transmit the same text using its own code and services; review that website's privacy policy for details.</p></section>
+<section class="policy-section" id="policy-website"><h2>8. DraftGuard landing page and demo</h2><p>The DraftGuard landing page includes a demonstration where sample text can be typed, cleared, restored, or discarded. The demo uses temporary page JavaScript state only; it is separate from the extension and does not send the demo text to the extension or to a DraftGuard server.</p><p>The static landing page is not designed to collect form submissions and does not include analytics or advertising scripts. The web hosting provider may process standard technical request information, such as IP address, user agent, and request time, as part of serving the webpage. Hosting-provider practices are governed by that provider's terms and policies.</p></section>
+<section class="policy-section" id="policy-rights"><h2>9. Your choices</h2><p>You can control DraftGuard's handling of drafts by turning protection off, excluding websites, choosing a retention period, deleting individual or all stored drafts, or uninstalling the extension. If you contact the developer by email, the email and any information you choose to include will be processed to respond to your request.</p></section>
+<section class="policy-section" id="policy-changes"><h2>10. Changes to this policy</h2><p>This policy may be updated if DraftGuard's functionality or data practices change. The “Last updated” date at the top will be revised when changes are made. Material data-handling changes should be reflected in this policy and the extension's store disclosures before the affected version is distributed.</p></section>
+<section class="policy-section" id="policy-contact"><h2>11. Contact</h2><p>DraftGuard is published by Suraj Dev. For privacy questions or requests relating to this policy, contact:</p><p><strong>Email:</strong> <a href="mailto:hello@surajdev.com">hello@surajdev.com</a><br/><strong>Website:</strong> <a href="https://surajdev.com/" rel="noopener noreferrer">surajdev.com</a></p></section>
+<p class="policy-final-note">This document describes the current DraftGuard build and is provided as a transparency notice, not as legal advice. Review it again whenever the extension's permissions or data practices change.</p>
+
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const modal = document.getElementById('privacy-modal');
+      if (!modal) return;
+      const dialog = modal.querySelector('.policy-dialog');
+      const closeButton = document.getElementById('close-policy');
+      const openButtons = Array.from(document.querySelectorAll('[data-open-policy]'));
+      const closeTargets = modal.querySelectorAll('[data-close-policy]');
+      let lastFocused = null;
+
+      function openPolicy(event) {
+        if (event) event.preventDefault();
+        lastFocused = document.activeElement;
+        modal.hidden = false;
+        document.body.classList.add('policy-open');
+        closeButton.focus();
+      }
+      function closePolicy() {
+        if (modal.hidden) return;
+        modal.hidden = true;
+        document.body.classList.remove('policy-open');
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+      }
+
+      openButtons.forEach(button => button.addEventListener('click', openPolicy));
+      closeButton.addEventListener('click', closePolicy);
+      closeTargets.forEach(target => target.addEventListener('click', closePolicy));
+      document.addEventListener('keydown', event => {
+        if (modal.hidden) return;
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closePolicy();
+          return;
+        }
+        if (event.key !== 'Tab') return;
+        const focusable = Array.from(dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+          .filter(element => element.offsetParent !== null);
+        if (!focusable.length) { event.preventDefault(); dialog.focus(); return; }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first.focus();
+        }
+      });
+      modal.querySelectorAll('.policy-toc-links a').forEach(link => {
+        link.addEventListener('click', event => {
+          const id = link.getAttribute('href').slice(1);
+          const target = document.getElementById(id);
+          if (!target) return;
+          event.preventDefault();
+          target.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const textarea = document.getElementById('demo-text');
+      const savedChip = document.getElementById('demo-chip');
+      const status = document.getElementById('demo-status');
+      const notice = document.getElementById('restore-notice');
+      const simulateButton = document.getElementById('simulate-loss');
+      const resetButton = document.getElementById('reset-demo');
+      const restoreButton = document.getElementById('restore-demo');
+      const discardButton = document.getElementById('discard-demo');
+      let savedText = '';
+      let draftWasLost = false;
+      const initialText = textarea.value;
+
+      textarea.addEventListener('input', () => {
+        if (!draftWasLost) {
+          savedText = textarea.value;
+          savedChip.textContent = 'Saved in demo';
+          status.textContent = 'Demo draft updated locally in this page.';
+        }
+      });
+      simulateButton.addEventListener('click', () => {
+        if (!textarea.value.trim()) {
+          status.textContent = 'Type a little text first, then simulate page loss.';
+          textarea.focus();
+          return;
+        }
+        savedText = textarea.value;
+        textarea.value = '';
+        draftWasLost = true;
+        notice.classList.add('visible');
+        savedChip.textContent = 'Draft found';
+        status.textContent = 'The demo text was cleared. A recoverable copy remains.';
+        restoreButton.focus();
+      });
+      restoreButton.addEventListener('click', () => {
+        textarea.value = savedText;
+        draftWasLost = false;
+        notice.classList.remove('visible');
+        savedChip.textContent = 'Restored';
+        status.textContent = 'Draft restored. You can continue editing.';
+        textarea.focus();
+      });
+      discardButton.addEventListener('click', () => {
+        savedText = '';
+        draftWasLost = false;
+        notice.classList.remove('visible');
+        savedChip.textContent = 'No saved draft';
+        status.textContent = 'The demo draft was discarded.';
+      });
+      resetButton.addEventListener('click', () => {
+        savedText = initialText;
+        textarea.value = initialText;
+        draftWasLost = false;
+        notice.classList.remove('visible');
+        savedChip.textContent = 'Saved in demo';
+        status.textContent = 'Demo reset. Try simulating page loss again.';
+      });
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
