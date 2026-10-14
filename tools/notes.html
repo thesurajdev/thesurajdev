@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes — talk to one person, privately</title>
+<meta name="description" content="A small Chrome extension for talking to one other person. No accounts, no servers, nothing saved.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --paper: #faf7f1;
+    --paper-dim: #f3efe5;
+    --ink: #26241f;
+    --ink-soft: #5b564c;
+    --ink-faint: #8a8474;
+    --accent: #8a6f4e;
+    --rule: #e4ddd0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---- Top mark / nav ---- */
+  .mark-row {
+    padding: 32px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 5;
+  }
+  .mark-row::after {
+    content: "";
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: -1px;
+    height: 1px;
+    background: transparent;
+  }
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding-bottom: 16px;
+  }
+  .mark-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .nav-link {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--ink-faint);
+    text-decoration: none;
+    padding-bottom: 16px;
+  }
+  .nav-link:hover { color: var(--ink-soft); }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 56px 0 48px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.14;
+    max-width: 14ch;
+  }
+  .hero p {
+    margin-top: 22px;
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 44ch;
+  }
+  .hero-cta {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 12px 22px;
+    border-radius: 3px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--accent); }
+  .btn-note {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+
+  /* ---- Folder-name demo strip ---- */
+  .demo {
+    margin-top: 48px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--paper-dim);
+    padding: 22px 24px;
+    max-width: 460px;
+  }
+  .demo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+  }
+  .demo-field {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 8px 12px;
+    color: var(--ink-soft);
+  }
+  .demo-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 8px 14px;
+    color: var(--ink-soft);
+  }
+  .demo-caption {
+    margin-top: 14px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+
+  /* ---- Sections ---- */
+  .section {
+    padding: 48px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .section-label {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+  }
+
+  /* How it works — three short beats, numbered because it genuinely is a sequence */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+  .step {
+    display: flex;
+    gap: 20px;
+  }
+  .step-num {
+    font-size: 15px;
+    color: var(--accent);
+    flex-shrink: 0;
+    width: 22px;
+    padding-top: 2px;
+  }
+  .step h3 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .step p {
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  /* What else it does — feature pair, not a numbered sequence */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+  }
+  .feature-item h3 {
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .feature-item p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 42ch;
+  }
+  @media (max-width: 560px) {
+    .feature-grid { grid-template-columns: 1fr; }
+  }
+
+  /* What it isn't */
+  .honest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+  }
+  .honest-item h3 {
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .honest-item p {
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+  @media (max-width: 560px) {
+    .honest-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Bottom CTA of the landing half */
+  .final-cta {
+    padding: 56px 0 64px;
+    border-top: 1px solid var(--rule);
+  }
+  .final-cta h2 {
+    font-size: 26px;
+    font-weight: 400;
+    max-width: 18ch;
+    margin-bottom: 18px;
+  }
+
+  /* ---- Privacy modal ---- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 36, 31, 0.45);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 20px;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  .modal-overlay.open {
+    display: flex;
+  }
+  .modal {
+    background: var(--paper-dim);
+    border-radius: 10px;
+    max-width: 640px;
+    width: 100%;
+    padding: 8px 0 0;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+    position: relative;
+  }
+  .modal-inner {
+    padding: 0 32px 32px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { background: var(--rule); }
+
+  /* ---- Policy content: same palette, contained inside the modal card ---- */
+  .policy-head {
+    padding: 36px 0 8px;
+  }
+  .policy-head h1 {
+    font-size: clamp(24px, 4vw, 30px);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    max-width: 20ch;
+  }
+  .policy-head p {
+    margin-top: 12px;
+    font-size: 15.5px;
+    color: var(--ink-soft);
+  }
+  .policy-head .updated {
+    margin-top: 16px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  .policy-summary {
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .policy-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .policy-summary-item dt {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 5px;
+  }
+  .policy-summary-item dd {
+    font-size: 14px;
+  }
+  @media (max-width: 480px) {
+    .policy-summary-grid { grid-template-columns: 1fr; gap: 14px; }
+  }
+
+  .policy-section {
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .policy-section h2 {
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .policy-section p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .policy-section p:last-child { margin-bottom: 0; }
+  .policy-section a { color: var(--accent); }
+  .term { color: var(--ink); }
+
+  .caveat {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  .policy-footer {
+    padding: 20px 0 4px;
+    border-top: 1px solid var(--rule);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  footer {
+    padding: 32px 0 56px;
+    border-top: 1px solid var(--rule);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  footer a { color: var(--ink-faint); }
+  footer a:hover { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<div class="mark-row wrap" style="max-width: 720px; margin: 0 auto;">
+  <a class="mark" href="#top"><span class="mark-dot"></span>Notes</a>
+  <a class="nav-link" href="?privacy=1" id="privacyNavLink">Privacy</a>
+</div>
+
+<div class="wrap" id="top">
+  <header class="hero">
+    <h1>Talk to one person, and leave nothing behind.</h1>
+    <p>Notes is a small Chrome extension that looks like a notepad. No accounts, no servers in between, nothing saved once you close it.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#install">Add to Chrome</a>
+      <span class="btn-note">Free. Takes about a minute to set up.</span>
+    </div>
+
+    <div class="demo">
+      <div class="demo-row">
+        <span class="demo-field">porchlight</span>
+        <span class="demo-btn">Open</span>
+      </div>
+      <div class="demo-caption">Two people, one shared word. That's the whole setup — no signing in on either side.</div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section-label">How it works</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Pick a word only the two of you know</h3>
+          <p>Something ordinary works best — a place, a joke, anything you can say out loud on a call or send in a text.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>You both open Notes and type it in</h3>
+          <p>The extension finds the other copy of itself that entered the same word, and connects your two browsers directly.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Write back and forth</h3>
+          <p>Messages travel straight between your machines. There's no inbox, no thread to scroll back through later — just what's on the page right now.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">What else it does</div>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <h3>Drop in a background</h3>
+        <p>Drag an image, GIF, or short video into the note, and it shows up for the other person too — a small way to make a shared space feel like it's yours.</p>
+      </div>
+      <div class="feature-item">
+        <h3>A room that hides itself</h3>
+        <p>Turn on the blur, and the moment your cursor leaves the window, the page darkens along with the text — so a glance at your screen from across the room shows nothing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">What it isn't</div>
+    <div class="honest-grid">
+      <div class="honest-item">
+        <h3>Not a messaging app</h3>
+        <p>There's no contact list, no read receipts, no notifications. It's closer to passing a note than sending a message.</p>
+      </div>
+      <div class="honest-item">
+        <h3>Not always-on</h3>
+        <p>Both people need the window open at the same time. Close it, and the conversation ends there — nothing arrives late.</p>
+      </div>
+      <div class="honest-item">
+        <h3>Not tied to who you are</h3>
+        <p>Each session gets a short, made-up name, generated fresh every time. There's no profile behind it.</p>
+      </div>
+      <div class="honest-item">
+        <h3>Not stored, by us or anyone</h3>
+        <p>We don't run a server that sees your messages, so there's nothing on our end to lose, leak, or hand over.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta" id="install">
+    <h2>Nothing to sign up for. Nothing to remember to delete.</h2>
+    <a class="btn" href="#">Add to Chrome — it's free</a>
+  </section>
+</div>
+
+<div class="modal-overlay" id="privacyOverlay">
+  <div class="modal">
+    <button class="modal-close" id="privacyClose" aria-label="Close">&times;</button>
+    <div class="modal-inner">
+      <div class="policy-head">
+        <h1>We don't have your data, because we never take it.</h1>
+        <p>This is the whole privacy policy — no separate document, nothing to hunt down. It explains exactly what "no accounts, no servers, nothing saved" means in practice.</p>
+        <div class="updated">Last updated September 2026</div>
+      </div>
+
+      <section class="policy-summary">
+        <dl class="policy-summary-grid">
+          <div class="policy-summary-item">
+            <dt>Accounts</dt>
+            <dd>None. Nothing to sign up for.</dd>
+          </div>
+          <div class="policy-summary-item">
+            <dt>Servers we run</dt>
+            <dd>None. Messages never pass through us.</dd>
+          </div>
+          <div class="policy-summary-item">
+            <dt>Stored on your device</dt>
+            <dd>Nothing. Closing the window clears it.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="policy-section">
+        <h2>How a conversation actually works</h2>
+        <p>When you open Notes and enter a folder name, the extension uses that name to find another copy of Notes that entered the same one — using <a href="https://peerjs.com/" target="_blank" rel="noopener">PeerJS</a>, an open-source library built on WebRTC. Once the two of you are connected, everything you write travels directly between your two computers.</p>
+        <p>We use PeerJS's free public signaling service only to make that initial introduction — the digital equivalent of two people finding each other's phone number. That service sees the folder name and a temporary, randomly generated connection ID. It never sees a single word either of you writes.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>What we store</h2>
+        <p>Nothing. There's no database behind Notes, because there's no server behind Notes. We can't hand over your messages if we're ever asked, because we never had them.</p>
+        <p>Inside the extension itself, nothing is written to your browser's storage either — no <span class="term">localStorage</span>, no cookies, no history file. Everything, including any background you drop in, lives in memory for as long as the window is open, and disappears the moment it closes.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>What the other person sees</h2>
+        <p>Only what you type, and any background you drop in. Notes shows a short, randomly generated name (something like "Sneaky Crane") above each message so a conversation involving more than two people stays readable — it isn't tied to your identity, your device, or anything else, and it changes every time you open a new session.</p>
+        <p>A folder name is not a password. Anyone who has it can join, so treat it the way you'd treat a note passed by hand: share it only with the person you mean to talk to.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>Permissions we ask for</h2>
+        <p>Notes requests the smallest set of Chrome permissions that let it draw its window and reach the signaling service. It does not ask to read the pages you visit, your browsing history, your bookmarks, or anything else on your device.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>The one honest limit</h2>
+        <p>Because there's no server holding your place, both people need Notes open at the same time for a message to arrive. If you close the window, the connection ends there — nothing queues up behind it, and nothing is delivered late.</p>
+        <div class="caveat">This is a direct trade for the privacy above: the same absence of a server that means we never see your messages also means nothing can hold them for you while you're away.</div>
+      </section>
+
+      <section class="policy-section">
+        <h2>Changes to this policy</h2>
+        <p>If how Notes works ever changes in a way that affects this page, we'll update the date at the top and describe the change plainly, here, in the same voice as everything above it.</p>
+      </section>
+
+      <div class="policy-footer">
+        Notes is a small, independent Chrome extension.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var overlay = document.getElementById('privacyOverlay');
+    var closeBtn = document.getElementById('privacyClose');
+    var navLink = document.getElementById('privacyNavLink');
+
+    function openPrivacy(pushState) {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (pushState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('privacy', '1');
+        window.history.pushState({ privacy: true }, '', url);
+      }
+    }
+
+    function closePrivacy(pushState) {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+      if (pushState) {
+        var url = new URL(window.location.href);
+        url.searchParams.delete('privacy');
+        window.history.pushState({ privacy: false }, '', url);
+      }
+    }
+
+    navLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      openPrivacy(true);
+    });
+
+    closeBtn.addEventListener('click', function () {
+      closePrivacy(true);
+    });
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closePrivacy(true);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closePrivacy(true);
+    });
+
+    window.addEventListener('popstate', function () {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('privacy') === '1') openPrivacy(false);
+      else closePrivacy(false);
+    });
+
+    // Deep link: ?privacy=1 opens the modal automatically on load.
+    var initialParams = new URLSearchParams(window.location.search);
+    if (initialParams.get('privacy') === '1') {
+      openPrivacy(false);
+    }
+  })();
+</script>
+
+</body>
+</html>
