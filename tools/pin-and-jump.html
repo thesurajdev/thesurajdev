@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pin &amp; Jump | Chrome extension</title>
+<meta name="description" content="Pin any text or area on a web page, add a note, and jump back to it in one click. No accounts, no servers, nothing collected.">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#faf7f1}
+.pj{--paper:#faf7f1;--dim:#f3efe5;--ink:#26241f;--soft:#5b564c;--faint:#8a8474;--accent:#3b5bdb;--rule:#e4ddd0;background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.6;max-width:720px;margin:0 auto;padding:0 28px;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+@media(prefers-color-scheme:dark){body{background:#1b1a17}.pj{--paper:#1b1a17;--dim:#24221e;--ink:#ece8de;--soft:#b3ad9f;--faint:#8a8474;--accent:#7c93f5;--rule:#33302a}.pj .pj-btn{color:#1b1a17}}
+.pj *{box-sizing:border-box}
+.pj h1,.pj h2,.pj h3,.pj p,.pj dl,.pj dd,.pj dt{margin:0}
+.pj a{color:inherit}
+.pj-bar{display:flex;align-items:center;justify-content:space-between;padding:32px 0 0;position:sticky;top:0;background:var(--paper);z-index:5}
+.pj-mark{display:inline-flex;align-items:center;gap:10px;font:13px 'Segoe UI',system-ui,sans-serif;letter-spacing:.3px;color:var(--soft);text-decoration:none;padding-bottom:16px}
+.pj-dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.pj-nav{font:13px 'Segoe UI',system-ui,sans-serif;color:var(--faint);text-decoration:none;padding-bottom:16px}
+.pj-nav:hover{color:var(--soft)}
+.pj-hero{padding:56px 0 48px}
+.pj-hero h1{font-size:clamp(36px,6vw,52px);font-weight:400;letter-spacing:-.01em;line-height:1.14;max-width:14ch}
+.pj-hero>p{margin-top:22px;font-size:19px;color:var(--soft);max-width:46ch}
+.pj-cta{margin-top:32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.pj .pj-btn{display:inline-flex;font:600 14.5px 'Segoe UI',system-ui,sans-serif;color:var(--paper);background:var(--ink);padding:12px 22px;border-radius:3px;text-decoration:none}
+.pj .pj-btn:hover{background:var(--accent);color:#fff}
+.pj-note{font:13px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+.pj-demo{margin-top:48px;border:1px solid var(--rule);border-radius:8px;background:var(--dim);padding:20px 22px;max-width:460px;font-family:'Segoe UI',system-ui,sans-serif}
+.pj-demo-head{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:12px}
+.pj-demo-head span:last-child{font-weight:400;color:var(--faint)}
+.pj-pin{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--rule);font-size:13px}
+.pj-pin:first-of-type{border-top:0}
+.pj-av{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);display:grid;place-items:center;font-size:17px;line-height:1}
+.pj-pin b{display:block;font-weight:650}
+.pj-pin span{display:block;color:var(--soft)}
+.pj-pin small{display:block;margin-top:2px;color:var(--faint);font-size:12px}
+.pj-demo-cap{margin-top:12px;font-size:12.5px;color:var(--faint)}
+.pj-sec{padding:48px 0;border-top:1px solid var(--rule)}
+.pj-label{font:12px 'Segoe UI',system-ui,sans-serif;color:var(--faint);margin-bottom:20px}
+.pj-steps{display:flex;flex-direction:column;gap:26px}
+.pj-step{display:flex;gap:20px}
+.pj-num{font-size:15px;color:var(--accent);flex-shrink:0;width:22px;padding-top:2px}
+.pj-step h3{font-size:18px;font-weight:400;margin-bottom:6px}
+.pj-step p{color:var(--soft);max-width:52ch}
+.pj kbd{font:12.5px 'Segoe UI',system-ui,sans-serif;border:1px solid var(--rule);background:var(--dim);border-radius:3px;padding:1px 6px;color:var(--ink)}
+.pj-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 32px}
+.pj-grid h3{font-size:17px;font-weight:400;margin-bottom:6px}
+.pj-grid p{color:var(--soft);font-size:15px}
+.pj-final{padding:56px 0 64px;border-top:1px solid var(--rule)}
+.pj-final h2{font-size:26px;font-weight:400;max-width:18ch;margin-bottom:18px}
+.pj-foot{padding:32px 0 56px;border-top:1px solid var(--rule);font:12.5px 'Segoe UI',system-ui,sans-serif;color:var(--faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.pj-foot a{color:var(--faint)}.pj-foot a:hover{color:var(--soft)}
+.pj-overlay{position:fixed;inset:0;background:rgba(20,19,16,.5);display:none;align-items:flex-start;justify-content:center;padding:48px 20px;overflow-y:auto;z-index:99999}
+.pj-overlay.open{display:flex}
+.pj-modal{background:var(--dim);border-radius:10px;max-width:640px;width:100%;padding-top:8px;box-shadow:0 24px 60px rgba(0,0,0,.25);position:relative}
+.pj-inner{padding:0 32px 32px}
+.pj .pj-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--soft);font:15px/1 'Segoe UI',system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.pj .pj-close:hover{background:var(--rule)}
+.pj-phead{padding:36px 0 8px}
+.pj-phead h1{font-size:clamp(24px,4vw,30px);font-weight:400;letter-spacing:-.01em;max-width:20ch;line-height:1.2}
+.pj-phead p{margin-top:12px;font-size:15.5px;color:var(--soft)}
+.pj-updated{margin-top:16px;font:12px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+.pj-sum{padding:24px 0;border-top:1px solid var(--rule);margin-top:16px}
+.pj-sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pj-sum-grid dt{font:11px 'Segoe UI',system-ui,sans-serif;color:var(--faint);margin-bottom:5px}
+.pj-sum-grid dd{font-size:14px}
+.pj-psec{padding:24px 0;border-top:1px solid var(--rule)}
+.pj-psec h2{font-size:17px;font-weight:400;margin-bottom:10px}
+.pj-psec p{font-size:14.5px;color:var(--soft);margin-bottom:10px}
+.pj-psec p:last-child{margin-bottom:0}
+.pj-psec a{color:var(--accent)}
+.pj-term{color:var(--ink)}
+.pj-caveat{margin-top:14px;padding:12px 16px;background:var(--paper);border-left:2px solid var(--accent);font:12.5px 'Segoe UI',system-ui,sans-serif;color:var(--soft)}
+.pj-pfoot{padding:20px 0 4px;border-top:1px solid var(--rule);font:12px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+@media(max-width:560px){.pj-grid{grid-template-columns:1fr}.pj{padding:0 18px}}
+@media(max-width:480px){.pj-sum-grid{grid-template-columns:1fr;gap:14px}.pj-inner{padding:0 20px 24px}}
+</style>
+</head>
+<body>
+<div class="pj" id="pj">
+  <div class="pj-bar">
+    <a class="pj-mark" href="#pj-top"><span class="pj-dot"></span>Pin &amp; Jump</a>
+    <a class="pj-nav" href="?privacy=1" id="pjPrivacyLink">Privacy</a>
+  </div>
+
+  <div id="pj-top">
+    <header class="pj-hero">
+      <h1>Pin the part that matters. Jump back in one click.</h1>
+      <p>Pin &amp; Jump is a small Chrome extension for saving the exact spot on a page you want to come back to: a paragraph, a section, or a single AI reply. Add a note, and it scrolls you straight there later.</p>
+      <div class="pj-cta">
+        <!-- Replace # with your Chrome Web Store link after publishing -->
+        <a class="pj-btn" href="#">Add to Chrome</a>
+        <span class="pj-note">Free. No account.</span>
+      </div>
+      <div class="pj-demo" aria-hidden="true">
+        <div class="pj-demo-head"><span>Pins</span><span>This page · All pages</span></div>
+        <div class="pj-pin"><div class="pj-av">✅</div><div><b>Final decision on pricing</b><span>We settled on the annual plan, billed once a year, with a 14-day trial…</span><small>Decision · Reply · 2 hours ago</small></div></div>
+        <div class="pj-pin"><div class="pj-av">❓</div><div><b>Check this claim</b><span>Median load time dropped from 4.1s to 1.8s after the change.</span><small>Question · Text · yesterday</small></div></div>
+        <div class="pj-demo-cap">Each pin keeps its icon, note and link back to the page.</div>
+      </div>
+    </header>
+
+    <section class="pj-sec">
+      <div class="pj-label">How it works</div>
+      <div class="pj-steps">
+        <div class="pj-step"><div class="pj-num">1</div><div><h3>Pin something</h3><p>Select text and click "Pin selection". Or press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd>, hover to highlight an area, and click it. On ChatGPT, Claude and Gemini, hover over a reply and use its pin button.</p></div></div>
+        <div class="pj-step"><div class="pj-num">2</div><div><h3>Add an icon and a note</h3><p>Pick one of 16 icons (star, idea, question, decision, warning and more) and type a few words so you remember why you saved it. Both are optional.</p></div></div>
+        <div class="pj-step"><div class="pj-num">3</div><div><h3>Jump back</h3><p>Open the Pins tab on the right edge, or press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, and click a pin. The page scrolls to the spot and flashes it. If the pin lives on another page, Pin &amp; Jump opens that page first.</p></div></div>
+      </div>
+    </section>
+
+    <section class="pj-sec">
+      <div class="pj-label">What else it does</div>
+      <div class="pj-grid">
+        <div><h3>Pinned spots stay visible</h3><p>Everything you pinned on a page gets a thin blue outline, so you can see what you already saved.</p></div>
+        <div><h3>Search and filter</h3><p>Search notes and text, filter by icon, and switch between "This page" and "All pages".</p></div>
+        <div><h3>Copy as Markdown</h3><p>Export your pins as a list with links, ready to paste into notes, docs or a message.</p></div>
+        <div><h3>Light, dark or match the site</h3><p>The panel follows your browser's color scheme, copies the page you are on, or stays in the mode you choose.</p></div>
+      </div>
+    </section>
+
+    <section class="pj-sec">
+      <div class="pj-label">What it isn't</div>
+      <div class="pj-grid">
+        <div><h3>Not a cloud service</h3><p>There is no account and no sync. Your pins stay in your browser on this device.</p></div>
+        <div><h3>Not watching your browsing</h3><p>It asks for one permission, storage. It runs on pages so it can find your pins, and it sends nothing anywhere.</p></div>
+        <div><h3>Not magic</h3><p>Pins find their spot by matching text. If a page rewrites its content, the jump may land near the spot instead of on it, and Pin &amp; Jump tells you when that happens.</p></div>
+        <div><h3>Not full of trackers</h3><p>No analytics, no ads, no remote code. Everything it runs ships inside the extension.</p></div>
+      </div>
+    </section>
+
+    <section class="pj-final">
+      <h2>Stop scrolling to find that one paragraph.</h2>
+      <a class="pj-btn" href="#">Add to Chrome, it's free</a>
+    </section>
+  </div>
+
+  <footer class="pj-foot"><span>Built by <a href="https://webot.surajdev.com/" target="_blank" rel="noopener noreferrer">Webot</a></span><a href="?privacy=1" id="pjPrivacyFoot">Privacy policy</a></footer>
+
+  <div class="pj-overlay" id="pjOverlay">
+    <div class="pj-modal" role="dialog" aria-modal="true" aria-label="Privacy policy">
+      <button class="pj-close" id="pjClose" aria-label="Close">&times;</button>
+      <div class="pj-inner">
+        <div class="pj-phead">
+          <h1>We don't have your data, because we never take it.</h1>
+          <p>This is the whole privacy policy for Pin &amp; Jump. It explains what "nothing collected" means in practice.</p>
+          <div class="pj-updated">Last updated October 2026</div>
+        </div>
+
+        <section class="pj-sum"><dl class="pj-sum-grid">
+          <div><dt>Accounts</dt><dd>None. Nothing to sign up for.</dd></div>
+          <div><dt>Data we collect</dt><dd>None. We never receive anything.</dd></div>
+          <div><dt>Stored on your device</dt><dd>Your pins and theme choice only.</dd></div>
+        </dl></section>
+
+        <section class="pj-psec"><h2>What we collect</h2>
+          <p>Nothing. The extension has no server, no analytics, and no tracking of any kind. We never see your pins, notes, or browsing activity, and it makes no network requests.</p></section>
+
+        <section class="pj-psec"><h2>What is saved on your device</h2>
+          <p>When you pin something, the extension saves it in your own browser using Chrome's local storage: the page address and title, a snippet of the text you pinned, your note and icon, the scroll position, and the time you pinned it. It also remembers your theme choice.</p>
+          <p>Because pins include page addresses and text from the pages you pin, treat them like your browser history: they stay on this device and are visible to anyone who uses your Chrome profile. Remove a pin with "Remove", or delete everything by uninstalling the extension.</p></section>
+
+        <section class="pj-psec"><h2>Permissions we ask for</h2>
+          <p><span class="pj-term">storage</span> saves your pins and theme choice on your device.</p>
+          <p><span class="pj-term">Access to http and https pages</span> lets the extension show its pin button and side panel, read the page text to find a pinned spot again, and outline pinned spots. It reads page content only on your device, and nothing it reads leaves the page.</p>
+          <p>It does not ask to read your history, your tabs list, or your bookmarks.</p></section>
+
+        <section class="pj-psec"><h2>Where other services come in</h2>
+          <p>Pin &amp; Jump does not talk to any service. When you click a pin from another page, it opens that page's address in your browser, just as if you had typed it, and that site's own policy applies.</p>
+          <p>"Copy as Markdown" writes your pins to your clipboard only when you click it. Where you paste them is up to you.</p>
+          <div class="pj-caveat">We do not sell or transfer user data to third parties, and we do not use data for anything unrelated to the extension's single purpose, or for creditworthiness or lending.</div></section>
+
+        <section class="pj-psec"><h2>Remote code</h2>
+          <p>The extension does not load or run remote code. All of its code is included in the package you install.</p></section>
+
+        <section class="pj-psec"><h2>Children</h2>
+          <p>The extension collects no personal information from anyone, including children.</p></section>
+
+        <section class="pj-psec"><h2>Changes and contact</h2>
+          <p>If this policy ever changes, we will update the date at the top and say what changed. Questions? Write to <a href="mailto:hello@surajdev.com">hello@surajdev.com</a>.</p></section>
+
+        <div class="pj-pfoot">Pin &amp; Jump is a small, independent Chrome extension by Webot.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var overlay=document.getElementById('pjOverlay'); if(!overlay) return;
+  function setUrl(on){var u=new URL(location.href);if(on)u.searchParams.set('privacy','1');else u.searchParams.delete('privacy');history.pushState({},'',u);}
+  function open(push){overlay.classList.add('open');document.body.style.overflow='hidden';if(push)setUrl(true);}
+  function close(push){overlay.classList.remove('open');document.body.style.overflow='';if(push)setUrl(false);}
+  ['pjPrivacyLink','pjPrivacyFoot'].forEach(function(id){var a=document.getElementById(id);if(a)a.addEventListener('click',function(e){e.preventDefault();open(true)})});
+  document.getElementById('pjClose').addEventListener('click',function(){close(true)});
+  overlay.addEventListener('click',function(e){if(e.target===overlay)close(true)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&overlay.classList.contains('open'))close(true)});
+  window.addEventListener('popstate',function(){new URLSearchParams(location.search).get('privacy')==='1'?open(false):close(false)});
+  if(new URLSearchParams(location.search).get('privacy')==='1') open(false);
+})();
+</script>
+</body>
+</html>
