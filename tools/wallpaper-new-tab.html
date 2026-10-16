@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wallpaper New Tab | Chrome extension</title>
+<meta name="description" content="Customize your new tab with images, animated GIFs, and video wallpapers. No accounts, no servers, nothing collected.">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#faf7f1}
+.wnp{--paper:#faf7f1;--dim:#f3efe5;--ink:#26241f;--soft:#5b564c;--faint:#8a8474;--accent:#8a6f4e;--rule:#e4ddd0;background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.6;max-width:720px;margin:0 auto;padding:0 28px;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.wnp *{box-sizing:border-box}
+.wnp h1,.wnp h2,.wnp h3,.wnp p,.wnp dl,.wnp dd,.wnp dt{margin:0}
+.wnp a{color:inherit}
+.wnp-bar{display:flex;align-items:center;justify-content:space-between;padding:32px 0 0;position:sticky;top:0;background:var(--paper);z-index:5}
+.wnp-mark{display:inline-flex;align-items:center;gap:10px;font:13px 'Segoe UI',system-ui,sans-serif;letter-spacing:.3px;color:var(--soft);text-decoration:none;padding-bottom:16px}
+.wnp-dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.wnp-nav{font:13px 'Segoe UI',system-ui,sans-serif;color:var(--faint);text-decoration:none;padding-bottom:16px}
+.wnp-nav:hover{color:var(--soft)}
+.wnp-hero{padding:56px 0 48px}
+.wnp-hero h1{font-size:clamp(36px,6vw,52px);font-weight:400;letter-spacing:-.01em;line-height:1.14;max-width:14ch}
+.wnp-hero>p{margin-top:22px;font-size:19px;color:var(--soft);max-width:46ch}
+.wnp-cta{margin-top:32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.wnp .wnp-btn{display:inline-flex;font:600 14.5px 'Segoe UI',system-ui,sans-serif;color:var(--paper);background:var(--ink);padding:12px 22px;border-radius:3px;text-decoration:none}
+.wnp .wnp-btn:hover{background:var(--accent)}
+.wnp-note{font:13px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+.wnp-demo{margin-top:48px;border:1px solid var(--rule);border-radius:8px;background:var(--dim);padding:22px 24px;max-width:460px}
+.wnp-demo-row{display:flex;gap:10px;font:13px 'Segoe UI',system-ui,sans-serif}
+.wnp-demo-field{flex:1;background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:8px 12px;color:var(--soft)}
+.wnp-demo-btn{background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:8px 14px;color:var(--soft)}
+.wnp-demo-cap{margin-top:14px;font:12.5px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+.wnp-sec{padding:48px 0;border-top:1px solid var(--rule)}
+.wnp-label{font:12px 'Segoe UI',system-ui,sans-serif;color:var(--faint);margin-bottom:20px}
+.wnp-steps{display:flex;flex-direction:column;gap:26px}
+.wnp-step{display:flex;gap:20px}
+.wnp-num{font-size:15px;color:var(--accent);flex-shrink:0;width:22px;padding-top:2px}
+.wnp-step h3{font-size:18px;font-weight:400;margin-bottom:6px}
+.wnp-step p{color:var(--soft);max-width:52ch}
+.wnp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 32px}
+.wnp-grid h3{font-size:17px;font-weight:400;margin-bottom:6px}
+.wnp-grid p{color:var(--soft);font-size:15px}
+.wnp-final{padding:56px 0 64px;border-top:1px solid var(--rule)}
+.wnp-final h2{font-size:26px;font-weight:400;max-width:18ch;margin-bottom:18px}
+.wnp-foot{padding:32px 0 56px;border-top:1px solid var(--rule);font:12.5px 'Segoe UI',system-ui,sans-serif;color:var(--faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.wnp-foot a{color:var(--faint)}.wnp-foot a:hover{color:var(--soft)}
+.wnp-overlay{position:fixed;inset:0;background:rgba(38,36,31,.45);display:none;align-items:flex-start;justify-content:center;padding:48px 20px;overflow-y:auto;z-index:99999}
+.wnp-overlay.open{display:flex}
+.wnp-modal{background:var(--dim);border-radius:10px;max-width:640px;width:100%;padding-top:8px;box-shadow:0 24px 60px rgba(0,0,0,.25);position:relative}
+.wnp-inner{padding:0 32px 32px}
+.wnp .wnp-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--soft);font:15px/1 'Segoe UI',system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.wnp .wnp-close:hover{background:var(--rule)}
+.wnp-phead{padding:36px 0 8px}
+.wnp-phead h1{font-size:clamp(24px,4vw,30px);font-weight:400;letter-spacing:-.01em;max-width:20ch;line-height:1.2}
+.wnp-phead p{margin-top:12px;font-size:15.5px;color:var(--soft)}
+.wnp-updated{margin-top:16px;font:12px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+.wnp-sum{padding:24px 0;border-top:1px solid var(--rule);margin-top:16px}
+.wnp-sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.wnp-sum-grid dt{font:11px 'Segoe UI',system-ui,sans-serif;color:var(--faint);margin-bottom:5px}
+.wnp-sum-grid dd{font-size:14px}
+.wnp-psec{padding:24px 0;border-top:1px solid var(--rule)}
+.wnp-psec h2{font-size:17px;font-weight:400;margin-bottom:10px}
+.wnp-psec p{font-size:14.5px;color:var(--soft);margin-bottom:10px}
+.wnp-psec p:last-child{margin-bottom:0}
+.wnp-psec a{color:var(--accent)}
+.wnp-term{color:var(--ink)}
+.wnp-caveat{margin-top:14px;padding:12px 16px;background:var(--paper);border-left:2px solid var(--accent);font:12.5px 'Segoe UI',system-ui,sans-serif;color:var(--soft)}
+.wnp-pfoot{padding:20px 0 4px;border-top:1px solid var(--rule);font:12px 'Segoe UI',system-ui,sans-serif;color:var(--faint)}
+@media(max-width:560px){.wnp-grid{grid-template-columns:1fr}.wnp{padding:0 18px}}
+@media(max-width:480px){.wnp-sum-grid{grid-template-columns:1fr;gap:14px}.wnp-inner{padding:0 20px 24px}}
+</style>
+</head>
+<body>
+<div class="wnp" id="wnp">
+  <div class="wnp-bar">
+    <a class="wnp-mark" href="#wnp-top"><span class="wnp-dot"></span>Wallpaper New Tab</a>
+    <a class="wnp-nav" href="?privacy=1" id="wnpPrivacyLink">Privacy</a>
+  </div>
+
+  <div id="wnp-top">
+    <header class="wnp-hero">
+      <h1>Make every new tab feel like yours.</h1>
+      <p>Wallpaper New Tab is a small Chrome extension that puts your own image, GIF, or video behind a calm, clean new tab. No accounts, no servers, nothing sent anywhere.</p>
+      <div class="wnp-cta">
+        <!-- Replace # with your Chrome Web Store link after publishing -->
+        <a class="wnp-btn" href="#">Add to Chrome</a>
+        <span class="wnp-note">Free. Takes about ten seconds.</span>
+      </div>
+      <div class="wnp-demo">
+        <div class="wnp-demo-row"><span class="wnp-demo-field">Search anything or enter a URL…</span><span class="wnp-demo-btn">10:53</span></div>
+        <div class="wnp-demo-cap">Your wallpaper sits behind a clock, search bar and shortcuts you can move around.</div>
+      </div>
+    </header>
+
+    <section class="wnp-sec">
+      <div class="wnp-label">How it works</div>
+      <div class="wnp-steps">
+        <div class="wnp-step"><div class="wnp-num">1</div><div><h3>Add the extension</h3><p>Install it from the Chrome Web Store. Open a new tab and you will see a clean starting page.</p></div></div>
+        <div class="wnp-step"><div class="wnp-num">2</div><div><h3>Choose a wallpaper</h3><p>Drag an image, GIF, or MP4/WebM video onto the page, upload one, or right-click any image or video on the web and pick "Set as wallpaper".</p></div></div>
+        <div class="wnp-step"><div class="wnp-num">3</div><div><h3>Make it yours</h3><p>Adjust fit, brightness and blur, then use Arrange layout to move and resize the clock, search and shortcuts.</p></div></div>
+      </div>
+    </section>
+
+    <section class="wnp-sec">
+      <div class="wnp-label">What else it does</div>
+      <div class="wnp-grid">
+        <div><h3>A library of moods</h3><p>Save a few wallpapers and switch between them in one click. They live on your device, ready when you are.</p></div>
+        <div><h3>Easy on your battery</h3><p>Videos start muted and loop quietly. A pause toggle cuts motion whenever you want less going on.</p></div>
+        <div><h3>Clock, date and search</h3><p>Show or hide each one. Searching takes you straight to Google.</p></div>
+        <div><h3>Your own shortcuts</h3><p>Google, YouTube and Gmail are there to start. Add any site you like.</p></div>
+      </div>
+    </section>
+
+    <section class="wnp-sec">
+      <div class="wnp-label">What it isn't</div>
+      <div class="wnp-grid">
+        <div><h3>Not a cloud service</h3><p>There is no account and no sync. Your wallpapers stay in your browser on this device.</p></div>
+        <div><h3>Not watching your browsing</h3><p>It only asks for two permissions, storage and a right-click menu. It cannot read the pages you visit.</p></div>
+        <div><h3>Not a photo host</h3><p>When you set a wallpaper from a website, the extension saves the link, not a copy. If that site removes the file, upload your own copy instead.</p></div>
+        <div><h3>Not full of trackers</h3><p>No analytics, no ads, no remote code. Everything it runs ships inside the extension.</p></div>
+      </div>
+    </section>
+
+    <section class="wnp-final">
+      <h2>Nothing to sign up for. Nothing to turn off.</h2>
+      <a class="wnp-btn" href="#">Add to Chrome, it's free</a>
+    </section>
+  </div>
+
+  <footer class="wnp-foot"><span>Built by <a href="https://webot.surajdev.com/" target="_blank" rel="noopener noreferrer">Webot</a></span><a href="?privacy=1" id="wnpPrivacyFoot">Privacy policy</a></footer>
+
+  <div class="wnp-overlay" id="wnpOverlay">
+    <div class="wnp-modal" role="dialog" aria-modal="true" aria-label="Privacy policy">
+      <button class="wnp-close" id="wnpClose" aria-label="Close">&times;</button>
+      <div class="wnp-inner">
+        <div class="wnp-phead">
+          <h1>We don't have your data, because we never take it.</h1>
+          <p>This is the whole privacy policy for Wallpaper New Tab. It explains what "nothing collected" means in practice.</p>
+          <div class="wnp-updated">Last updated October 2026</div>
+        </div>
+
+        <section class="wnp-sum"><dl class="wnp-sum-grid">
+          <div><dt>Accounts</dt><dd>None. Nothing to sign up for.</dd></div>
+          <div><dt>Data we collect</dt><dd>None. We never receive anything.</dd></div>
+          <div><dt>Stored on your device</dt><dd>Your settings and wallpapers only.</dd></div>
+        </dl></section>
+
+        <section class="wnp-psec"><h2>What we collect</h2>
+          <p>Nothing. The extension has no server, no analytics, and no tracking of any kind. We never see your wallpapers, settings, searches, or browsing activity.</p></section>
+
+        <section class="wnp-psec"><h2>What is saved on your device</h2>
+          <p>To work, the extension saves a few things in your own browser, using Chrome's storage and IndexedDB: your settings, the wallpapers you upload or drop in, links to media you pick from the right-click menu, your shortcuts, your focus note, and your layout positions.</p>
+          <p>None of this is sent anywhere by the extension. You can remove it with "Clear library" and "Reset settings", or by uninstalling.</p></section>
+
+        <section class="wnp-psec"><h2>Permissions we ask for</h2>
+          <p><span class="wnp-term">storage</span> saves your settings, layout and wallpaper choices on your device.</p>
+          <p><span class="wnp-term">contextMenus</span> adds "Set as wallpaper" when you right-click an image or video.</p>
+          <p>It does not ask to read the pages you visit, your history, your tabs, or your bookmarks.</p></section>
+
+        <section class="wnp-psec"><h2>Where other services come in</h2>
+          <p>When you search from the new tab page, you are sent to Google Search with your query, and Google's own <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a> applies from there.</p>
+          <p>If you set a wallpaper from a website, your browser loads it straight from that site, like any image on a webpage, so that site can see the request. Clicking a shortcut opens that site under its own policy.</p>
+          <div class="wnp-caveat">We do not sell or transfer user data to third parties, and we do not use data for anything unrelated to the extension's single purpose, or for creditworthiness or lending.</div></section>
+
+        <section class="wnp-psec"><h2>Remote code</h2>
+          <p>The extension does not load or run remote code. All of its code is included in the package you install.</p></section>
+
+        <section class="wnp-psec"><h2>Children</h2>
+          <p>The extension collects no personal information from anyone, including children.</p></section>
+
+        <section class="wnp-psec"><h2>Changes and contact</h2>
+          <p>If this policy ever changes, we will update the date at the top and say what changed. Questions? Write to <a href="mailto:hello@surajdev.com">hello@surajdev.com</a>.</p></section>
+
+        <div class="wnp-pfoot">Wallpaper New Tab is a small, independent Chrome extension by Webot.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var root=document.getElementById('wnp'); if(!root) return;
+  var overlay=document.getElementById('wnpOverlay');
+  function setUrl(on){var u=new URL(location.href);if(on)u.searchParams.set('privacy','1');else u.searchParams.delete('privacy');history.pushState({},'',u);}
+  function open(push){overlay.classList.add('open');document.body.style.overflow='hidden';if(push)setUrl(true);}
+  function close(push){overlay.classList.remove('open');document.body.style.overflow='';if(push)setUrl(false);}
+  ['wnpPrivacyLink','wnpPrivacyFoot'].forEach(function(id){var a=document.getElementById(id);if(a)a.addEventListener('click',function(e){e.preventDefault();open(true)})});
+  document.getElementById('wnpClose').addEventListener('click',function(){close(true)});
+  overlay.addEventListener('click',function(e){if(e.target===overlay)close(true)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&overlay.classList.contains('open'))close(true)});
+  window.addEventListener('popstate',function(){new URLSearchParams(location.search).get('privacy')==='1'?open(false):close(false)});
+  if(new URLSearchParams(location.search).get('privacy')==='1') open(false);
+})();
+</script>
+</body>
+</html>
