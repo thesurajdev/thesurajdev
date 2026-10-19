@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <meta name="description" content="Find broken jump links before your visitors do. Webot Anchor Check audits internal #anchor links across your WordPress site.">
+  <title>Webot Anchor Check — Find broken jump links</title>
+  <style>
+    :root{--bg:#0d1017;--panel:#141925;--panel2:#191f2d;--text:#f4f6fb;--muted:#a5afc1;--line:rgba(255,255,255,.1);--accent:#9cf36b;--accent2:#d6ffbd;--red:#ff737d;--blue:#a8baff;--radius:22px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6}a{color:inherit;text-decoration:none}button{font:inherit}
+    .wrap{width:min(1160px,calc(100% - 40px));margin:auto}.nav{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;font-weight:750;letter-spacing:-.03em}.brandmark{width:38px;height:38px;border-radius:12px;background:var(--accent);display:grid;place-items:center;color:#10170c;font-weight:900;font-size:19px;box-shadow:0 0 30px #9cf36b25}.brand small{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:650;line-height:1.3}.navlinks{display:flex;align-items:center;gap:28px;color:var(--muted);font-size:13px}.navlinks a:hover{color:white}.navcta,.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:11px;padding:12px 17px;background:var(--accent);color:#11180d;font-size:13px;font-weight:800;border:1px solid transparent;transition:.2s}.navcta:hover,.button:hover{transform:translateY(-2px);box-shadow:0 9px 30px #9cf36b20}.button.secondary{background:transparent;border-color:var(--line);color:var(--text)}.button.secondary:hover{border-color:#9cf36b80}
+    .hero{padding:84px 0 72px;display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center}.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid #9cf36b45;background:#9cf36b0d;color:var(--accent2);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.11em;text-transform:uppercase}.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}h1{font-size:clamp(43px,5.5vw,70px);letter-spacing:-.065em;line-height:1.02;margin:23px 0 22px;font-weight:780;max-width:650px}h1 em{font-style:normal;color:var(--accent)}.lead{font-size:17px;color:var(--muted);max-width:560px;line-height:1.8}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 22px}.fineprint{font-size:12px;color:#8792a7;display:flex;align-items:center;gap:8px}.fineprint svg{color:var(--accent)}.preview{position:relative;padding:18px;border:1px solid #ffffff17;border-radius:25px;background:linear-gradient(145deg,#1a2130,#10141e);box-shadow:0 30px 100px #0008;transform:rotate(.6deg)}.windowbar{display:flex;align-items:center;justify-content:space-between;padding:4px 3px 16px;color:#9da9bd;font-size:11px}.lights{display:flex;gap:5px}.lights i{width:7px;height:7px;background:#455064;border-radius:50%}.app{background:#0e131d;border:1px solid #ffffff12;border-radius:15px;overflow:hidden}.apphead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.apphead strong{font-size:14px}.apphead span{font-size:10px;color:var(--muted)}.scanbtn{background:var(--accent);color:#15200e;border-radius:7px;padding:8px 10px;font-size:10px;font-weight:850}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}.stat{background:#171e2b;border:1px solid #ffffff0b;border-radius:10px;padding:13px}.stat small{font-size:10px;color:#9ca8bc;display:block}.stat strong{font-size:24px;letter-spacing:-.04em;display:block;margin-top:3px}.stat .good{color:var(--accent)}.stat .bad{color:var(--red)}.table{padding:0 14px 15px}.thead,.tr{display:grid;grid-template-columns:1.1fr 1.25fr .65fr;gap:8px;align-items:center}.thead{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#718097;padding:9px 10px}.tr{background:#171e2a;border:1px solid #ffffff08;padding:11px 10px;border-radius:8px;font-size:10px;margin-bottom:6px;color:#d8deea}.muted{color:#8592a8}.status{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:750}.status:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}.status.broken{color:var(--red)}.status.broken:before{background:var(--red)}.status.ok{color:var(--accent)}.float-note{position:absolute;right:-17px;bottom:25px;background:#202838;border:1px solid #ffffff1d;border-radius:12px;padding:12px 15px;box-shadow:0 15px 40px #0008;font-size:11px}.float-note strong{display:block;font-size:13px}.float-note span{color:var(--muted)}
+    .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0}.trustrow{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;color:#a3aec0;font-size:12px}.trustitem{display:flex;gap:9px;align-items:center}.trustitem b{color:#edf2fa;font-weight:650}.trusticon{width:27px;height:27px;border-radius:8px;background:#1b2230;display:grid;place-items:center;color:var(--accent)}
+    section{padding:86px 0}.section-head{max-width:650px;margin:0 auto 42px;text-align:center}.kicker{color:var(--accent);font-size:11px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}.section-head h2{font-size:clamp(30px,4vw,45px);letter-spacing:-.05em;line-height:1.1;margin:12px 0}.section-head p{color:var(--muted);font-size:15px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:25px;min-height:208px}.featureicon{height:42px;width:42px;display:grid;place-items:center;border-radius:12px;background:#9cf36b12;color:var(--accent);margin-bottom:20px}.feature h3{font-size:16px;letter-spacing:-.02em;margin:0 0 9px}.feature p{font-size:13px;color:var(--muted);margin:0;line-height:1.8}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}.split h2{font-size:clamp(31px,4vw,46px);line-height:1.08;letter-spacing:-.05em;margin:14px 0}.split p{color:var(--muted);font-size:14px}.checklist{list-style:none;padding:0;margin:24px 0}.checklist li{display:flex;gap:11px;align-items:flex-start;margin:13px 0;font-size:13px;color:#dce2ed}.check{color:var(--accent);font-weight:900}.codecard{border:1px solid var(--line);background:#131925;border-radius:20px;padding:22px}.codehead{display:flex;justify-content:space-between;color:#9ba7bb;font-size:11px;padding-bottom:15px;border-bottom:1px solid var(--line)}.codebody{padding:15px 0 4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}.code-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff08}.code-line:last-child{border:0}.code-line .url{color:#b7c4d8;overflow-wrap:anywhere}.pill{border-radius:5px;padding:3px 7px;font-size:9px;font-weight:800;white-space:nowrap}.pill.green{background:#9cf36b18;color:var(--accent)}.pill.red{background:#ff737d18;color:var(--red)}.pill.grey{background:#aab4c214;color:#aab4c2}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;counter-reset:step}.step{border-top:1px solid var(--line);padding:22px 10px 10px 0}.stepnum{font-size:11px;letter-spacing:.1em;color:var(--accent);font-weight:850}.step h3{font-size:18px;margin:12px 0 8px}.step p{font-size:13px;color:var(--muted);max-width:300px}.faq{max-width:800px;margin:auto}.faq details{border-bottom:1px solid var(--line);padding:20px 0}.faq summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font-size:14px}.faq summary:after{content:"+";color:var(--accent);font-size:20px;line-height:1}.faq details[open] summary:after{content:"−"}.faq details p{font-size:13px;color:var(--muted);max-width:720px;margin:14px 0 0}.cta{padding:0 0 85px}.ctabox{background:radial-gradient(ellipse at 90% 0%,#9cf36b18,transparent 42%),#151b27;border:1px solid var(--line);border-radius:26px;padding:48px;display:flex;justify-content:space-between;align-items:center;gap:30px}.ctabox h2{font-size:clamp(30px,4vw,42px);line-height:1.08;letter-spacing:-.05em;margin:10px 0}.ctabox p{color:var(--muted);font-size:13px;max-width:500px}.footer{border-top:1px solid var(--line);padding:28px 0 36px;color:#8d99ac;font-size:11px}.footrow{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}.footlinks{display:flex;gap:20px}.footlinks a:hover{color:white}.mobilemenu{display:none}
+    @media(max-width:850px){.hero{grid-template-columns:1fr;gap:45px;padding-top:60px}.preview{max-width:640px;width:100%;margin:auto}.navlinks{gap:15px}.grid3{grid-template-columns:repeat(2,1fr)}.split{gap:30px}.ctabox{padding:35px;align-items:flex-start;flex-direction:column}.ctabox .actions{margin:0}}
+    @media(max-width:600px){.wrap{width:min(100% - 28px,1160px)}.nav{height:68px}.navlinks a:not(.navcta){display:none}.navlinks{gap:0}.navcta{padding:10px 12px}.brandmark{width:34px;height:34px}.hero{padding:48px 0 54px;gap:35px}h1{font-size:45px}.lead{font-size:15px}.actions .button{width:100%}.preview{padding:10px;border-radius:18px}.apphead{padding:13px}.stats{padding:9px;gap:6px}.stat{padding:9px}.stat strong{font-size:19px}.table{padding:0 9px 10px}.tr,.thead{grid-template-columns:1fr 1fr .7fr;gap:5px;font-size:9px;padding-left:7px;padding-right:7px}.float-note{right:4px;bottom:-20px}.trustrow{justify-content:flex-start}.trustitem{width:calc(50% - 10px)}section{padding:64px 0}.grid3{grid-template-columns:1fr}.feature{min-height:0;padding:22px}.section-head{margin-bottom:30px}.split{grid-template-columns:1fr;gap:30px}.steps{grid-template-columns:1fr;gap:8px}.step{padding:18px 0}.ctabox{padding:26px}.footrow{align-items:flex-start;flex-direction:column}.footlinks{flex-wrap:wrap;gap:14px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="wrap nav">
+    <a class="brand" href="#" aria-label="Webot Anchor Check home">
+      <span class="brandmark">W</span><span>webot<small>ANCHOR CHECK</small></span>
+    </a>
+    <nav class="navlinks" aria-label="Main navigation">
+      <a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#faq">FAQ</a>
+      <a class="navcta" href="#get-started">Get started <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main>
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> WordPress plugin · Version 1.0.0</div>
+        <h1>Broken jump links.<br><em>Found before</em><br>your visitors do.</h1>
+        <p class="lead">Webot Anchor Check scans your WordPress site for internal <code>#anchor</code> links that point to IDs that no longer exist. Catch dead table-of-contents links, menus and buttons before they frustrate visitors.</p>
+        <div class="actions">
+          <a class="button" href="#get-started">Explore the plugin <span aria-hidden="true">↗</span></a>
+          <a class="button secondary" href="https://webot.surajdev.com/" target="_blank" rel="noopener">Meet Webot <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="fineprint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg> No external services. No tracking. Your data stays on your site.</div>
+      </div>
+      <div class="preview" aria-label="Illustrative Anchor Check dashboard preview">
+        <div class="windowbar"><div class="lights"><i></i><i></i><i></i></div><span>WordPress Admin / Tools / Anchor Check</span><span>•••</span></div>
+        <div class="app">
+          <div class="apphead"><div><strong>Anchor Check</strong><br><span>Last scan · Just now</span></div><span class="scanbtn">↻ Scan my site</span></div>
+          <div class="stats">
+            <div class="stat"><small>Pages checked</small><strong>128</strong></div>
+            <div class="stat"><small>Anchors checked</small><strong>846</strong></div>
+            <div class="stat"><small>Broken anchors</small><strong class="bad">04</strong></div>
+          </div>
+          <div class="table">
+            <div class="thead"><span>Page / Link</span><span>Target</span><span>Status</span></div>
+            <div class="tr"><span>Pricing button</span><span class="muted">#pricing</span><span class="status broken">Broken</span></div>
+            <div class="tr"><span>Read the guide</span><span class="muted">#guide</span><span class="status ok">OK</span></div>
+            <div class="tr"><span>FAQs menu</span><span class="muted">#faqs</span><span class="status broken">Broken</span></div>
+            <div class="tr"><span>Jump to details</span><span class="muted">#details</span><span class="status ok">OK</span></div>
+          </div>
+        </div>
+        <div class="float-note"><strong>4 issues to review</strong><span>Illustrative dashboard preview</span></div>
+      </div>
+    </div>
+    <div class="trust"><div class="wrap trustrow">
+      <div class="trustitem"><span class="trusticon">✓</span><span><b>Rendered HTML</b><br>Checks real page output</span></div>
+      <div class="trustitem"><span class="trusticon">⌕</span><span><b>Useful scan log</b><br>Filter, search and export</span></div>
+      <div class="trustitem"><span class="trusticon">◷</span><span><b>Weekly scans</b><br>Optional scheduled checks</span></div>
+      <div class="trustitem"><span class="trusticon">◎</span><span><b>Site-owned data</b><br>No external account</span></div>
+    </div></div>
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head"><div class="kicker">Small issue. Real frustration.</div><h2>Every click should take visitors somewhere.</h2><p>When a section ID changes, its old jump links can quietly stop working. Webot helps you find those broken connections across your own site.</p></div>
+        <div class="grid3">
+          <article class="feature"><div class="featureicon">⌕</div><h3>Scan rendered pages</h3><p>Checks your published pages and posts using rendered HTML, including navigation, theme output and page-builder content.</p></article>
+          <article class="feature"><div class="featureicon">⌁</div><h3>See exactly what broke</h3><p>Review each internal anchor, its source page, target and status in a searchable scan log.</p></article>
+          <article class="feature"><div class="featureicon">↗</div><h3>Go straight to the fix</h3><p>Use one-click edit links to open the page containing the broken link and make the correction.</p></article>
+          <article class="feature"><div class="featureicon">◷</div><h3>Schedule weekly checks</h3><p>Enable optional weekly scans and get a dashboard notice when a scan finds issues to review.</p></article>
+          <article class="feature"><div class="featureicon">⇩</div><h3>Export your results</h3><p>Download the full scan log as CSV for reporting, documentation or your own QA workflow.</p></article>
+          <article class="feature"><div class="featureicon">⚙</div><h3>Handle dynamic IDs</h3><p>Add IDs created after page load to an ignore list, so known JavaScript-generated anchors don't clutter your results.</p></article>
+        </div>
+      </div>
+    </section>
+    <section style="background:#10141d;border-top:1px solid var(--line);border-bottom:1px solid var(--line)" id="how-it-works">
+      <div class="wrap split">
+        <div>
+          <div class="kicker">Clear results, not guesswork</div>
+          <h2>Know what works.<br>Know what needs attention.</h2>
+          <p>Each result is labelled so you can distinguish a valid anchor from a broken destination or a page that could not be checked.</p>
+          <ul class="checklist">
+            <li><span class="check">✓</span><span><b>OK</b> — the target ID exists on the destination page.</span></li>
+            <li><span class="check">✓</span><span><b>Broken</b> — the target ID or named anchor was not found.</span></li>
+            <li><span class="check">✓</span><span><b>Failed / Skipped / Unchecked</b> — see the scan outcome rather than silently losing a page.</span></li>
+            <li><span class="check">✓</span><span>External links and common browser/router fragments are intentionally skipped.</span></li>
+          </ul>
+        </div>
+        <div class="codecard">
+          <div class="codehead"><span>EXAMPLE SCAN RESULTS</span><span>Links view</span></div>
+          <div class="codebody">
+            <div class="code-line"><span class="url">/services/#pricing</span><span class="pill red">BROKEN</span></div>
+            <div class="code-line"><span class="url">/guides/#step-2</span><span class="pill green">OK</span></div>
+            <div class="code-line"><span class="url">/about/#our-team</span><span class="pill green">OK</span></div>
+            <div class="code-line"><span class="url">/contact/#form</span><span class="pill grey">SKIPPED</span></div>
+            <div class="code-line"><span class="url">/old-page/#details</span><span class="pill red">FAILED</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="wrap">
+        <div class="section-head"><div class="kicker">Easy to get going</div><h2>Three steps to healthier jump links.</h2><p>No third-party dashboard or account setup. Run the checks from your WordPress admin.</p></div>
+        <div class="steps">
+          <div class="step"><div class="stepnum">STEP 01</div><h3>Install the plugin</h3><p>Upload the plugin folder or install it through the WordPress Plugins screen when the listing is available.</p></div>
+          <div class="step"><div class="stepnum">STEP 02</div><h3>Start a site scan</h3><p>Open <b>Tools → Anchor Check</b> and click “Scan my site” to check your published content.</p></div>
+          <div class="step"><div class="stepnum">STEP 03</div><h3>Review and repair</h3><p>Filter the results, open pages that need edits, and export a CSV when you need a record.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="faq" style="background:#10141d;border-top:1px solid var(--line)">
+      <div class="wrap">
+        <div class="section-head"><div class="kicker">Good to know</div><h2>Frequently asked questions.</h2></div>
+        <div class="faq">
+          <details><summary>Does it check links to other websites?</summary><p>No. Webot Anchor Check checks internal links that point to fragments on your own site.</p></details>
+          <details><summary>Will it change my content or affect visitors?</summary><p>No content is edited. The plugin reads your pages and records results when you start a scan or when an optional scheduled scan runs. Visitors are not affected by the scan interface.</p></details>
+          <details><summary>Why might an anchor that works be reported as broken?</summary><p>Some tabs, accordions and sliders create IDs with JavaScript after the page loads. The scanner reads server-rendered HTML. Add those known IDs to the ignore list in Tools → Anchor Check → Settings.</p></details>
+          <details><summary>What does the plugin store?</summary><p>The latest scan results, settings and short-lived cached ID lists are stored in your own WordPress database. The plugin does not send data to an external service; its uninstall routine removes its stored data.</p></details>
+          <details><summary>What are the requirements?</summary><p>WordPress 5.8 or later and PHP 7.4 or later. The server must have the PHP DOM extension enabled for HTML parsing.</p></details>
+        </div>
+      </div>
+    </section>
+    <section class="cta" id="get-started">
+      <div class="wrap ctabox">
+        <div><div class="kicker">A Webot tool for WordPress</div><h2>Make every jump count.</h2><p>Keep menus, table-of-contents links and in-page buttons pointing to the right place. Find the broken anchors, then fix them with confidence.</p></div>
+        <div class="actions"><a class="button" href="https://webot.surajdev.com/" target="_blank" rel="noopener">Explore Webot ↗</a><a class="button secondary" href="https://wordpress.org/plugins/developers/add/" target="_blank" rel="noopener">WordPress plugin directory ↗</a></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap footrow">
+    <a class="brand" href="#"><span class="brandmark">W</span><span>webot<small>BY SURAJ DEV</small></span></a>
+    <div>© <span id="year">2026</span> Webot Anchor Check. Built for WordPress.</div>
+    <div class="footlinks"><a href="#features">Features</a><a href="#faq">FAQ</a><a href="https://webot.surajdev.com/" target="_blank" rel="noopener">Webot</a></div>
+  </div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
