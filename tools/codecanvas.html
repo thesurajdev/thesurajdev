@@ -1,1 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeCanvas 1.7.11 — Code-First WordPress Theme | Suraj Dev</title>
+<meta name="description" content="CodeCanvas 1.7.11 is a free, standalone code-first WordPress theme with real-file editing in Code Studio, a scoped MCP server for AI clients, and a recovery guard. No required companion plugin.">
+<meta name="author" content="Suraj Dev">
+<meta property="og:title" content="CodeCanvas 1.7.11 — a code-first WordPress theme">
+<meta property="og:description" content="Real-file editing inside WordPress, a scoped MCP server for AI clients, and a recovery guard. Free and GPL-2.0-or-later.">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --cc-bg:#f8f7f4;--cc-surface:#fff;--cc-ink:#17251f;--cc-muted:#637069;--cc-line:#e3e7e1;
+  --cc-brand:#315c4a;--cc-brand-dark:#234637;--cc-accent:#d1f06d;
+  --cc-dark:#17251f;--cc-dark-2:#223229;--cc-dark-line:#3a4a3f;--cc-dark-ink:#e9f4e6;
+  --cc-radius:20px;--cc-shadow:0 18px 55px rgba(27,43,34,.08);--cc-container:1140px;
+  --cc-font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --cc-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cc-bg);color:var(--cc-ink);font-family:var(--cc-font);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--cc-brand)}
+img{max-width:100%}
+.container{width:min(calc(100% - 44px),var(--cc-container));margin-inline:auto}
+.skip{position:absolute;left:-9999px}
+.skip:focus{position:fixed;left:16px;top:16px;z-index:99;padding:12px 18px;background:var(--cc-ink);color:#fff;border-radius:8px}
 
+/* Header */
+.site-header{position:sticky;top:0;z-index:50;background:rgba(248,247,244,.86);border-bottom:1px solid rgba(227,231,225,.9);backdrop-filter:blur(14px)}
+.header-inner{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;color:var(--cc-ink);font-size:19px;font-weight:800;letter-spacing:-.04em;text-decoration:none}
+.mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#1f352e;color:var(--cc-accent);font-size:14px;font-weight:850;letter-spacing:-.07em}
+.brand small{display:block;font-size:11px;font-weight:600;color:var(--cc-muted);letter-spacing:0}
+.nav{display:flex;align-items:center;gap:28px}
+.nav a{color:var(--cc-muted);font-size:14px;font-weight:600;text-decoration:none}
+.nav a:hover{color:var(--cc-ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border:1px solid var(--cc-brand);border-radius:100px;background:var(--cc-brand);color:#fff;font-weight:700;font-size:15px;text-decoration:none;transition:transform .18s ease,background .18s ease}
+.btn:hover{transform:translateY(-2px);background:var(--cc-brand-dark);color:#fff}
+.btn-ghost{background:transparent;border-color:var(--cc-line);color:var(--cc-ink)}
+.btn-ghost:hover{background:#fff;border-color:var(--cc-brand);color:var(--cc-ink)}
+.btn-sm{min-height:42px;padding:9px 18px;font-size:14px}
+.menu-toggle{display:none;width:46px;height:46px;border:1px solid var(--cc-line);background:#fff;border-radius:12px}
+.menu-toggle span{display:block;width:19px;height:2px;margin:4px auto;background:var(--cc-ink)}
+
+/* Hero */
+.hero{position:relative;padding-block:clamp(70px,10vw,128px);overflow:hidden}
+.hero:before{content:"";position:absolute;width:560px;height:560px;border-radius:50%;right:-190px;top:-210px;background:radial-gradient(circle,rgba(209,240,109,.5),rgba(209,240,109,0) 70%);pointer-events:none}
+.hero-inner{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;margin:0 0 20px;color:var(--cc-brand);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow:before{content:"";width:26px;height:2px;background:var(--cc-accent)}
+.hero h1{max-width:14ch;margin:0;font-size:clamp(44px,7.2vw,82px);line-height:.97;letter-spacing:-.07em;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--cc-brand)}
+.hero-sub{max-width:540px;margin:26px 0 32px;color:var(--cc-muted);font-size:clamp(17px,2vw,20px);line-height:1.75}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px}
+.cta-note{margin:20px 0 0;color:var(--cc-muted);font-size:13px}
+.cta-note code{font-family:var(--cc-mono);font-size:12px;color:var(--cc-brand)}
+
+/* Code window art */
+.art{perspective:1200px}
+.window{overflow:hidden;border:1px solid var(--cc-dark-line);border-radius:16px;background:var(--cc-dark);box-shadow:0 34px 74px rgba(0,0,0,.26);transform:rotate(2deg)}
+.window-top{display:flex;align-items:center;gap:7px;padding:13px 16px;border-bottom:1px solid var(--cc-dark-line);background:var(--cc-dark-2)}
+.window-top i{width:9px;height:9px;border-radius:50%;background:#78907f}
+.window-top span{margin-left:10px;color:#c5d0c8;font-size:11px;font-family:var(--cc-mono)}
+.window pre{margin:0;padding:24px 20px;color:var(--cc-dark-ink);font-family:var(--cc-mono);font-size:12.5px;line-height:1.95;white-space:pre-wrap;overflow-wrap:anywhere}
+.window .k{color:var(--cc-accent);font-weight:700}
+.window .s{color:#89c9ff}
+.window .c{color:#7f9686}
+.window .n{color:#e6c07b}
+.art-caption{margin-top:16px;text-align:center;color:var(--cc-muted);font-size:10px;font-weight:800;letter-spacing:.2em}
+
+/* Strip */
+.strip{border-block:1px solid var(--cc-line);background:#fff}
+.strip-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-block:30px}
+.stat{text-align:center}
+.stat strong{display:block;font-size:clamp(26px,3.4vw,38px);line-height:1.1;letter-spacing:-.05em;color:var(--cc-ink)}
+.stat span{color:var(--cc-muted);font-size:12.5px;font-weight:600}
+
+/* Sections */
+section{padding-block:clamp(64px,8vw,104px)}
+.intro{max-width:700px;margin-bottom:44px}
+.intro h2{margin:0 0 16px;font-size:clamp(30px,4.2vw,50px);line-height:1.07;letter-spacing:-.055em}
+.intro p{margin:0;color:var(--cc-muted);font-size:17px}
+
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--cc-surface);border:1px solid var(--cc-line);border-radius:var(--cc-radius);padding:28px;min-height:220px;box-shadow:0 4px 18px rgba(27,43,34,.025)}
+.card .ico{display:grid;place-items:center;width:42px;height:42px;margin-bottom:22px;border-radius:13px;background:#edf4e7;color:var(--cc-brand)}
+.card h3{margin:0 0 9px;font-size:19px;letter-spacing:-.025em}
+.card p{margin:0;color:var(--cc-muted);font-size:14px}
+
+/* Split feature */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.split h2{margin:0 0 18px;font-size:clamp(28px,3.6vw,42px);line-height:1.1;letter-spacing:-.05em}
+.split p{color:var(--cc-muted);margin:0 0 22px;font-size:16.5px}
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:13px}
+.checklist li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:#38483f}
+.checklist li:before{content:"";flex:0 0 20px;width:20px;height:20px;margin-top:2px;border-radius:50%;background:var(--cc-accent) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="%2317251f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 6.8"/></svg>') center/12px no-repeat}
+
+.panel-dark{background:var(--cc-dark);border-radius:var(--cc-radius);padding:clamp(26px,4vw,44px);color:var(--cc-dark-ink);box-shadow:var(--cc-shadow)}
+.panel-dark .eyebrow{color:var(--cc-accent)}
+.panel-dark h2{color:#fff}
+.panel-dark p{color:#c5d0c8}
+
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.tool{font-family:var(--cc-mono);font-size:12px;padding:7px 12px;border:1px solid var(--cc-dark-line);border-radius:8px;background:var(--cc-dark-2);color:#cfe6d4}
+.tool-hot{border-color:#4d7d63;color:var(--cc-accent)}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:step}
+.step{position:relative;padding:28px;border:1px solid var(--cc-line);border-radius:var(--cc-radius);background:#fff}
+.step:before{counter-increment:step;content:counter(step);position:absolute;top:22px;right:24px;color:#c3cdc4;font-size:13px;font-weight:800}
+.step h3{margin:16px 0 8px;font-size:18px;letter-spacing:-.025em}
+.step p{margin:0;color:var(--cc-muted);font-size:14px}
+.step .ico{color:var(--cc-brand)}
+
+/* Docs */
+.docs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.doc{display:flex;justify-content:space-between;gap:16px;padding:16px 18px;border:1px solid var(--cc-line);border-radius:13px;background:#fff}
+.doc{color:var(--cc-ink);text-decoration:none;align-items:center;transition:border-color .18s ease,transform .18s ease}.doc:hover,.doc:focus-visible{border-color:var(--cc-brand);transform:translateY(-1px)}.doc b{font-size:14.5px}
+.doc span{color:var(--cc-muted);font-size:13px}
+
+/* CTA band */
+.band{background:var(--cc-dark);border-radius:var(--cc-radius);padding:clamp(34px,5vw,64px);text-align:center;color:var(--cc-dark-ink)}
+.band h2{margin:0 0 14px;color:#fff;font-size:clamp(28px,4vw,46px);letter-spacing:-.05em;line-height:1.08}
+.band p{max-width:560px;margin:0 auto 30px;color:#c5d0c8}
+.band .btn{background:var(--cc-accent);border-color:var(--cc-accent);color:var(--cc-dark)}
+.band .btn:hover{background:#c2e45a;color:var(--cc-dark)}
+.band .btn-ghost{background:transparent;border-color:var(--cc-dark-line);color:#fff}
+
+/* Footer */
+.site-footer{margin-top:40px;border-top:1px solid var(--cc-line);background:#f0f1eb}
+.footer-main{display:flex;justify-content:space-between;gap:40px;padding-block:44px 30px}
+.footer-brand{max-width:420px}
+.footer-brand p{color:var(--cc-muted);font-size:14px;margin:14px 0 0}
+.footer-links{display:flex;gap:40px;flex-wrap:wrap}
+.footer-links h4{margin:0 0 12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cc-muted)}
+.footer-links a{display:block;color:var(--cc-ink);font-size:14px;font-weight:600;text-decoration:none;margin:0 0 9px}
+.footer-links a:hover{color:var(--cc-brand);text-decoration:underline}
+.footer-bottom{display:flex;justify-content:space-between;gap:16px;padding-block:20px;border-top:1px solid #dfe3dc;color:var(--cc-muted);font-size:12.5px}
+.footer-bottom a{font-weight:700}
+
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr}
+  .art{order:2}
+  .split{grid-template-columns:1fr;gap:34px}
+  .grid-3,.steps{grid-template-columns:1fr}
+  .docs{grid-template-columns:1fr}
+  .strip-inner{grid-template-columns:repeat(2,1fr);gap:26px}
+}
+@media(max-width:820px){
+  .nav{display:none;position:absolute;top:76px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:14px;padding:20px 22px 26px;background:var(--cc-bg);border-bottom:1px solid var(--cc-line)}
+  .nav.is-open{display:flex}
+  .menu-toggle{display:block}
+  .header-cta{display:none}
+  .footer-main,.footer-bottom{flex-direction:column;gap:24px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#">
+      <span class="mark" aria-hidden="true">CC</span>
+      <span>CodeCanvas<small>by Suraj Dev · Credit to Webot</small></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Primary">
+      <a href="#studio">Code Studio</a>
+      <a href="#mcp">MCP server</a>
+      <a href="#recovery">Recovery</a>
+      <a href="#docs">Docs</a>
+      <a href="https://surajdev.com/">Suraj Dev</a>
+    </nav>
+    <a class="btn btn-sm header-cta" href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">Download CodeCanvas 1.7.11 ↗</a>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="nav" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <p class="eyebrow">CodeCanvas 1.7.11 · Free WordPress theme · GPL-2.0-or-later</p>
+        <h1>Write real code <em>inside</em> WordPress.</h1>
+        <p class="hero-sub">CodeCanvas 1.7.11 is a standalone, code-first theme with a real-file <b>Code&nbsp;Studio</b> workspace and a scoped <b>MCP server</b> for AI clients. No page-builder onboarding, no required companion plugin — just your source files, an editor that writes to disk, and a recovery guard that undoes a bad write.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">Download CodeCanvas 1.7.11 ↗</a>
+          <a class="btn btn-ghost" href="#studio">See how it works</a>
+        </div>
+        <p class="cta-note">Requires WordPress 6.6+ and PHP 7.4+. Install with <code>Appearance → Themes → Add New → Upload Theme</code>.</p>
+      </div>
+      <div class="art">
+        <div class="window">
+          <div class="window-top"><i></i><i></i><i></i><span>codecanvas-site / front-page.php</span></div>
+<pre><span class="c">&lt;?php</span>
+<span class="c">// Your website lives in the child theme.</span>
+<span class="k">if</span> ( ! defined( <span class="s">'ABSPATH'</span> ) ) { <span class="k">exit</span>; }
+
+<span class="k">get_header</span>();
+
+<span class="k">while</span> ( <span class="n">have_posts</span>() ) : <span class="n">the_post</span>(); ?&gt;
+  &lt;article <span class="k">class</span>=<span class="s">"cc-section"</span>&gt;
+    &lt;h1&gt;&lt;?php <span class="n">the_title</span>(); ?&gt;&lt;/h1&gt;
+    &lt;div&gt;&lt;?php <span class="n">the_content</span>(); ?&gt;&lt;/div&gt;
+  &lt;/article&gt;
+&lt;?php <span class="k">endwhile</span>;
+
+<span class="k">get_footer</span>();</pre>
+        </div>
+        <p class="art-caption">EDITED IN CODE STUDIO · SAVED TO DISK</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="container strip-inner">
+      <div class="stat"><strong>25</strong><span>MCP tools · 12 read-only</span></div>
+      <div class="stat"><strong>3</strong><span>Snapshots kept per file</span></div>
+      <div class="stat"><strong>0</strong><span>Required companion plugins</span></div>
+      <div class="stat"><strong>282</strong><span>Automated tests passing</span></div>
+    </div>
+  </div>
+
+  <section id="studio">
+    <div class="container">
+      <div class="intro">
+        <h2>Code Studio: a real-file workspace, not a page builder.</h2>
+        <p>Browse and edit the actual PHP, CSS and JavaScript on the server. Files are read from disk and written back, with validation before every write.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <span class="ico" aria-hidden="true">▤</span>
+          <h3>Edit real source files</h3>
+          <p>Browse eligible files under <code>wp-content/themes</code> and <code>wp-content/plugins</code>. Create, rename and delete supported source files from the Explorer.</p>
+        </div>
+        <div class="card">
+          <span class="ico" aria-hidden="true">⌕</span>
+          <h3>Search and jump</h3>
+          <p>Full-text search across supported files, with results that open the editor at the matching line.</p>
+        </div>
+        <div class="card">
+          <span class="ico" aria-hidden="true">◧</span>
+          <h3>Child-theme first</h3>
+          <p>The framework parent is read-only in Studio. Website work happens in the <b>CodeCanvas Site</b> child theme, created only when you click the button.</p>
+        </div>
+        <div class="card">
+          <span class="ico" aria-hidden="true">⌫</span>
+          <h3>Syntax checks before saving</h3>
+          <p>PHP syntax errors are rejected before they touch disk. A save is refused if the file changed on disk since you opened it.</p>
+        </div>
+        <div class="card">
+          <span class="ico" aria-hidden="true">◔</span>
+          <h3>Snapshot history</h3>
+          <p>Three revisions per file are kept before every change. Compare a hash, restore a snapshot, and keep working.</p>
+        </div>
+        <div class="card">
+          <span class="ico" aria-hidden="true">▣</span>
+          <h3>Focus mode &amp; mobile</h3>
+          <p>Hide the WordPress chrome to fill the screen (<code>Ctrl/Cmd+Shift+M</code>, leave with <code>Esc</code>). On phones the Explorer becomes a slide-in drawer with touch-sized controls.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mcp" style="background:#fff;border-block:1px solid var(--cc-line)">
+    <div class="container split">
+      <div>
+        <p class="eyebrow">Optional · off by default</p>
+        <h2>Connect Claude, Cursor or any MCP client — with a scope you choose.</h2>
+        <p>CodeCanvas ships a scoped HTTP MCP endpoint. Generate a token, pick the exact projects and tools an AI client can reach, and leave writes off until you need them. OAuth&nbsp;2.1 with PKCE is supported for browser clients such as claude.ai.</p>
+        <ul class="checklist">
+          <li>Bearer token, stored only as an HMAC hash and shown once.</li>
+          <li>File writes and content writes are separate switches, both off by default.</li>
+          <li>Framework theme is never exposed; paths are validated and every write is snapshotted.</li>
+          <li>Calls are rate-limited and audited.</li>
+          <li><code>create_plugin</code> scaffolds a plugin but never adds it to the write scope, and activation stays manual.</li>
+        </ul>
+      </div>
+      <div class="panel-dark">
+        <p class="eyebrow">POST /wp-json/codecanvas/v1/mcp</p>
+        <h2 style="font-size:clamp(24px,3vw,32px)">25 tools, scoped per project.</h2>
+        <p>Pick the projects and tools an AI client may use. Writes stay off until you switch them on.</p>
+        <div class="tools">
+          <span class="tool">read_file</span><span class="tool">list_files</span><span class="tool">search_code</span>
+          <span class="tool tool-hot">patch_file</span><span class="tool">write_file</span><span class="tool">create_file</span>
+          <span class="tool tool-hot">list_snapshots</span><span class="tool tool-hot">restore_snapshot</span>
+          <span class="tool tool-hot">render_url</span><span class="tool tool-hot">get_php_error_log</span>
+          <span class="tool">update_settings</span><span class="tool">update_menu</span>
+          <span class="tool">upload_media</span><span class="tool tool-hot">create_plugin</span>
+          <span class="tool">read_more…</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="recovery">
+    <div class="container split">
+      <div class="panel-dark">
+        <p class="eyebrow">Recovery guard</p>
+        <h2 style="font-size:clamp(24px,3vw,34px)">A bad write is a one-request outage, not a file-manager repair.</h2>
+        <p>Install the must-use guard and CodeCanvas restores the last snapshot automatically when a PHP fatal error comes from a theme or plugin file. Install, repair or remove it from <b>MCP &amp; Settings</b> — nothing runs until you ask it to.</p>
+      </div>
+      <div>
+        <p class="eyebrow">Built for the way you already work</p>
+        <h2>Everything stays a normal WordPress record.</h2>
+        <p>Content written over MCP is a regular page or post, so it stays editable in the block editor. Menus, settings and media go through normal WordPress APIs. CodeCanvas adds one menu with three destinations — <b>Welcome</b>, <b>Code Studio</b> and <b>MCP&nbsp;&amp;&nbsp;Settings</b> — and does not replace the dashboard, block editor, media library, users, plugins or settings screens.</p>
+        <ul class="checklist">
+          <li>No Studio, MCP settings or CodeMirror assets load on public pages.</li>
+          <li>Homepage loads just 4 stylesheets and 2 scripts.</li>
+          <li>Translation-ready, threaded comments, custom logo and menus, wide blocks.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#fff;border-block:1px solid var(--cc-line)">
+    <div class="container">
+      <div class="intro">
+        <h2>From install to a live build in three steps.</h2>
+        <p>Recommended on local or staging first. Review the security model before enabling source writes or MCP on production.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="ico" aria-hidden="true">◈</span>
+          <h3>Install &amp; activate</h3>
+          <p>Upload <code>codecanvas-1.7.11.zip</code> and activate CodeCanvas. The Welcome screen shows the version, active theme, MCP state and recovery-guard status.</p>
+        </div>
+        <div class="step">
+          <span class="ico" aria-hidden="true">◈</span>
+          <h3>Create the child theme</h3>
+          <p>One explicit click in Code Studio creates and activates the <b>CodeCanvas Site</b> child theme and opens <code>wp-content/themes/codecanvas-site</code>. Existing files are never overwritten.</p>
+        </div>
+        <div class="step">
+          <span class="ico" aria-hidden="true">◈</span>
+          <h3>Build — optionally with AI</h3>
+          <p>Edit templates, CSS and JS in Studio, or enable MCP and connect Claude Code, Cursor, VS Code or claude.ai with the scope you choose.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="docs">
+    <div class="container">
+      <div class="intro">
+        <h2>Documented end to end.</h2>
+        <p>A full product specification, security model and QA record ship with the theme. The automated suite passes <b>282 tests</b> covering path policy, framework protection, MCP authentication and tools, sanitization, rate limiting and audit redaction.</p>
+      </div>
+      <div class="docs">
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Getting started</b><span>Install, first run, child theme ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Code Studio</b><span>Interface and file policy ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Child theme workspace</b><span>Parent/child boundary ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>MCP integration</b><span>Tools, clients, OAuth ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Developer guide</b><span>Architecture &amp; templates ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Install &amp; recovery</b><span>Upgrade, rollback, guard ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Security model</b><span>Risk register &amp; practices ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>QA report &amp; changelog</b><span>Every release, verified ↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="band">
+        <h2>CodeCanvas is free, standalone and open source.</h2>
+        <p>GPL-2.0-or-later. No required companion plugin, no vendor lock-in, no dashboard takeover. Back it up, try it on staging, and keep your source where it belongs — on the server.</p>
+        <div class="cta-row" style="justify-content:center">
+          <a class="btn" href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">Download CodeCanvas 1.7.11 ↗</a>
+          <a class="btn btn-ghost" href="https://surajdev.com/">Visit Suraj Dev ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-main">
+    <div class="footer-brand">
+      <a class="brand" href="#" style="text-decoration:none">
+        <span class="mark" aria-hidden="true">CC</span>
+        <span>CodeCanvas<small>by Suraj Dev · Credit to Webot</small></span>
+      </a>
+      <p>A code-first WordPress theme: real-file editing in the browser, an optional scoped MCP server for AI clients, and a recovery guard that undoes a bad write. Released under GPL-2.0-or-later.</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <h4>Theme</h4>
+        <a href="#studio">Code Studio</a>
+        <a href="#mcp">MCP server</a>
+        <a href="#recovery">Recovery guard</a>
+        <a href="#docs">Documentation</a>
+      </div>
+      <div>
+        <h4>Suraj Dev</h4>
+        <a href="https://surajdev.com/">surajdev.com</a>
+        <a href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">CodeCanvas repository</a>
+        <a href="https://surajdev.com/">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© <span id="year">2026</span> Suraj Dev · Credit to Webot · GPL-2.0-or-later</p>
+    <p>WordPress is a trademark of the WordPress Foundation. This theme is not affiliated with or endorsed by WordPress.org.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var t=document.getElementById('menuToggle'),n=document.getElementById('nav');
+  if(t&&n){t.addEventListener('click',function(){var o=n.classList.toggle('is-open');t.setAttribute('aria-expanded',o?'true':'false');});
+    n.addEventListener('click',function(e){if(e.target.tagName==='A'){n.classList.remove('is-open');t.setAttribute('aria-expanded','false');}});}
+  var y=document.getElementById('year');if(y){y.textContent=new Date().getFullYear();}
+})();
+</script>
+</body>
+</html>
