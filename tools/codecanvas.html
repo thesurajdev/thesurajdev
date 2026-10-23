@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CodeCanvas 1.7.11 — Code-First WordPress Theme | Suraj Dev</title>
-<meta name="description" content="CodeCanvas 1.7.11 is a free, standalone code-first WordPress theme with real-file editing in Code Studio, a scoped MCP server for AI clients, and a recovery guard. No required companion plugin.">
+<title>CodeCanvas 2.0.0 — Code-First WordPress Plugin | Suraj Dev</title>
+<meta name="description" content="CodeCanvas 2.0.0 is a free, code-first WordPress plugin: a real-file Code Studio, coded pages, a scoped MCP server for AI clients and a recovery guard. It generates a real theme for your site and needs no companion plugin.">
 <meta name="author" content="Suraj Dev">
-<meta property="og:title" content="CodeCanvas 1.7.11 — a code-first WordPress theme">
-<meta property="og:description" content="Real-file editing inside WordPress, a scoped MCP server for AI clients, and a recovery guard. Free and GPL-2.0-or-later.">
+<meta property="og:title" content="CodeCanvas 2.0.0 — a code-first WordPress plugin">
+<meta property="og:description" content="Real-file editing inside WordPress, per-page coded HTML/CSS/JS, a scoped MCP server for AI clients and a recovery guard. Free and GPL-2.0-or-later.">
 <meta property="og:type" content="website">
 <style>
 :root{
@@ -48,8 +48,8 @@ img{max-width:100%}
 .hero{position:relative;padding-block:clamp(70px,10vw,128px);overflow:hidden}
 .hero:before{content:"";position:absolute;width:560px;height:560px;border-radius:50%;right:-190px;top:-210px;background:radial-gradient(circle,rgba(209,240,109,.5),rgba(209,240,109,0) 70%);pointer-events:none}
 .hero-inner{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;margin:0 0 20px;color:var(--cc-brand);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
-.eyebrow:before{content:"";width:26px;height:2px;background:var(--cc-accent)}
+.eyebrow{display:flex;align-items:center;gap:9px;margin:0 0 20px;color:var(--cc-brand);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;overflow-wrap:anywhere}
+.eyebrow:before{content:"";flex:0 0 26px;width:26px;height:2px;background:var(--cc-accent)}
 .hero h1{max-width:14ch;margin:0;font-size:clamp(44px,7.2vw,82px);line-height:.97;letter-spacing:-.07em;font-weight:800}
 .hero h1 em{font-style:normal;color:var(--cc-brand)}
 .hero-sub{max-width:540px;margin:26px 0 32px;color:var(--cc-muted);font-size:clamp(17px,2vw,20px);line-height:1.75}
@@ -102,9 +102,13 @@ section{padding-block:clamp(64px,8vw,104px)}
 .panel-dark h2{color:#fff}
 .panel-dark p{color:#c5d0c8}
 
-.tools{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
-.tool{font-family:var(--cc-mono);font-size:12px;padding:7px 12px;border:1px solid var(--cc-dark-line);border-radius:8px;background:var(--cc-dark-2);color:#cfe6d4}
+.tools{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 0}
+.tool{font-family:var(--cc-mono);font-size:11.5px;padding:6px 10px;border:1px solid var(--cc-dark-line);border-radius:8px;background:var(--cc-dark-2);color:#cfe6d4}
 .tool-hot{border-color:#4d7d63;color:var(--cc-accent)}
+.tool-group{margin-top:18px}
+.tool-label{display:flex;align-items:baseline;gap:8px;margin:0 0 4px;color:#e9f4e6;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.tool-label span{margin-left:auto;color:#9fb5a4;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:none}
+.tool-note{margin:20px 0 0;padding-top:14px;border-top:1px solid var(--cc-dark-line);color:#9fb5a4;font-size:12.5px}
 
 /* Steps */
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:step}
@@ -118,6 +122,7 @@ section{padding-block:clamp(64px,8vw,104px)}
 .docs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .doc{display:flex;justify-content:space-between;gap:16px;padding:16px 18px;border:1px solid var(--cc-line);border-radius:13px;background:#fff}
 .doc{color:var(--cc-ink);text-decoration:none;align-items:center;transition:border-color .18s ease,transform .18s ease}.doc:hover,.doc:focus-visible{border-color:var(--cc-brand);transform:translateY(-1px)}.doc b{font-size:14.5px}
+.doc b{font-size:14.5px}
 .doc span{color:var(--cc-muted);font-size:13px}
 
 /* CTA band */
@@ -142,11 +147,15 @@ section{padding-block:clamp(64px,8vw,104px)}
 
 @media(max-width:960px){
   .hero-inner{grid-template-columns:1fr}
+  .split>*{min-width:0}
   .art{order:2}
   .split{grid-template-columns:1fr;gap:34px}
   .grid-3,.steps{grid-template-columns:1fr}
   .docs{grid-template-columns:1fr}
   .strip-inner{grid-template-columns:repeat(2,1fr);gap:26px}
+}
+@media(max-width:600px){
+  .eyebrow{letter-spacing:.1em;font-size:11px}
 }
 @media(max-width:820px){
   .nav{display:none;position:absolute;top:76px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:14px;padding:20px 22px 26px;background:var(--cc-bg);border-bottom:1px solid var(--cc-line)}
@@ -174,7 +183,7 @@ section{padding-block:clamp(64px,8vw,104px)}
       <a href="#docs">Docs</a>
       <a href="https://surajdev.com/">Suraj Dev</a>
     </nav>
-    <a class="btn btn-sm header-cta" href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">Download CodeCanvas 1.7.11 ↗</a>
+    <a class="btn btn-sm header-cta" href="dist/codecanvas-2.0.0.zip">Download CodeCanvas 2.0.0 ↗</a>
     <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="nav" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
@@ -186,20 +195,21 @@ section{padding-block:clamp(64px,8vw,104px)}
   <section class="hero">
     <div class="container hero-inner">
       <div>
-        <p class="eyebrow">CodeCanvas 1.7.11 · Free WordPress theme · GPL-2.0-or-later</p>
+        <p class="eyebrow">CodeCanvas 2.0.0 · Free WordPress plugin · GPL-2.0-or-later</p>
         <h1>Write real code <em>inside</em> WordPress.</h1>
-        <p class="hero-sub">CodeCanvas 1.7.11 is a standalone, code-first theme with a real-file <b>Code&nbsp;Studio</b> workspace and a scoped <b>MCP server</b> for AI clients. No page-builder onboarding, no required companion plugin — just your source files, an editor that writes to disk, and a recovery guard that undoes a bad write.</p>
+        <p class="hero-sub">CodeCanvas 2.0.0 is a code-first <b>plugin</b>. It gives you a real-file <b>Code&nbsp;Studio</b> workspace, per-page <b>coded HTML, CSS and JavaScript</b>, and a scoped <b>MCP server</b> so an AI client can edit the same files you do. It also generates a real theme for your site — no page-builder onboarding, and nothing in the database standing between you and your templates.</p>
         <div class="cta-row">
-          <a class="btn" href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">Download CodeCanvas 1.7.11 ↗</a>
+          <a class="btn" href="dist/codecanvas-2.0.0.zip">Download CodeCanvas 2.0.0 ↗</a>
           <a class="btn btn-ghost" href="#studio">See how it works</a>
         </div>
-        <p class="cta-note">Requires WordPress 6.6+ and PHP 7.4+. Install with <code>Appearance → Themes → Add New → Upload Theme</code>.</p>
+        <p class="cta-note">Requires WordPress 6.6+ and PHP 7.4+. Install with <code>Plugins → Add New → Upload Plugin</code>, then open <code>CodeCanvas → Code Studio</code>.</p>
       </div>
       <div class="art">
         <div class="window">
           <div class="window-top"><i></i><i></i><i></i><span>codecanvas-site / front-page.php</span></div>
 <pre><span class="c">&lt;?php</span>
-<span class="c">// Your website lives in the child theme.</span>
+<span class="c">// Your website lives in its own theme,</span>
+<span class="c">// generated once and never overwritten.</span>
 <span class="k">if</span> ( ! defined( <span class="s">'ABSPATH'</span> ) ) { <span class="k">exit</span>; }
 
 <span class="k">get_header</span>();
@@ -223,7 +233,7 @@ section{padding-block:clamp(64px,8vw,104px)}
       <div class="stat"><strong>25</strong><span>MCP tools · 12 read-only</span></div>
       <div class="stat"><strong>3</strong><span>Snapshots kept per file</span></div>
       <div class="stat"><strong>0</strong><span>Required companion plugins</span></div>
-      <div class="stat"><strong>282</strong><span>Automated tests passing</span></div>
+      <div class="stat"><strong>305</strong><span>Automated tests passing</span></div>
     </div>
   </div>
 
@@ -245,9 +255,9 @@ section{padding-block:clamp(64px,8vw,104px)}
           <p>Full-text search across supported files, with results that open the editor at the matching line.</p>
         </div>
         <div class="card">
-          <span class="ico" aria-hidden="true">◧</span>
-          <h3>Child-theme first</h3>
-          <p>The framework parent is read-only in Studio. Website work happens in the <b>CodeCanvas Site</b> child theme, created only when you click the button.</p>
+          <span class="ico" aria-hidden="true">▣</span>
+          <h3>Your theme, generated for you</h3>
+          <p>One click creates and activates the standalone <b>CodeCanvas Site</b> theme. Existing files are never overwritten, and the plugin folder stays read-only in Studio.</p>
         </div>
         <div class="card">
           <span class="ico" aria-hidden="true">⌫</span>
@@ -260,7 +270,7 @@ section{padding-block:clamp(64px,8vw,104px)}
           <p>Three revisions per file are kept before every change. Compare a hash, restore a snapshot, and keep working.</p>
         </div>
         <div class="card">
-          <span class="ico" aria-hidden="true">▣</span>
+          <span class="ico" aria-hidden="true">◧</span>
           <h3>Focus mode &amp; mobile</h3>
           <p>Hide the WordPress chrome to fill the screen (<code>Ctrl/Cmd+Shift+M</code>, leave with <code>Esc</code>). On phones the Explorer becomes a slide-in drawer with touch-sized controls.</p>
         </div>
@@ -277,24 +287,40 @@ section{padding-block:clamp(64px,8vw,104px)}
         <ul class="checklist">
           <li>Bearer token, stored only as an HMAC hash and shown once.</li>
           <li>File writes and content writes are separate switches, both off by default.</li>
-          <li>Framework theme is never exposed; paths are validated and every write is snapshotted.</li>
-          <li>Calls are rate-limited and audited.</li>
+          <li>The plugin's own source is never exposed; paths are validated and every write is snapshotted.</li>
+          <li>Calls are rate-limited and audited — the log folds out of the way, with the failure count in its header.</li>
           <li><code>create_plugin</code> scaffolds a plugin but never adds it to the write scope, and activation stays manual.</li>
         </ul>
       </div>
       <div class="panel-dark">
         <p class="eyebrow">POST /wp-json/codecanvas/v1/mcp</p>
-        <h2 style="font-size:clamp(24px,3vw,32px)">25 tools, scoped per project.</h2>
-        <p>Pick the projects and tools an AI client may use. Writes stay off until you switch them on.</p>
-        <div class="tools">
-          <span class="tool">read_file</span><span class="tool">list_files</span><span class="tool">search_code</span>
-          <span class="tool tool-hot">patch_file</span><span class="tool">write_file</span><span class="tool">create_file</span>
-          <span class="tool tool-hot">list_snapshots</span><span class="tool tool-hot">restore_snapshot</span>
-          <span class="tool tool-hot">render_url</span><span class="tool tool-hot">get_php_error_log</span>
-          <span class="tool">update_settings</span><span class="tool">update_menu</span>
-          <span class="tool">upload_media</span><span class="tool tool-hot">create_plugin</span>
-          <span class="tool">read_more…</span>
+        <h2 style="font-size:clamp(24px,3vw,32px)">25 tools, grouped by what they can do.</h2>
+        <p>Pick the projects and tools an AI client may use. Tools are grouped by capability, and each group header shows how many are enabled, so gated tools are visible without opening anything.</p>
+        <div class="tool-group">
+          <p class="tool-label">Read-only <span>12 · on by default</span></p>
+          <div class="tools">
+            <span class="tool">site_info</span><span class="tool">list_projects</span><span class="tool">list_files</span>
+            <span class="tool">read_file</span><span class="tool">search_files</span><span class="tool">list_content</span>
+            <span class="tool">get_content</span><span class="tool">get_settings</span><span class="tool">list_menus</span>
+            <span class="tool">list_snapshots</span><span class="tool">render_url</span><span class="tool">get_php_error_log</span>
+          </div>
         </div>
+        <div class="tool-group">
+          <p class="tool-label">File writes <span>7 · off by default</span></p>
+          <div class="tools">
+            <span class="tool tool-hot">write_file</span><span class="tool tool-hot">create_file</span><span class="tool tool-hot">delete_file</span>
+            <span class="tool tool-hot">patch_file</span><span class="tool tool-hot">create_files</span><span class="tool tool-hot">restore_snapshot</span>
+            <span class="tool tool-hot">create_plugin</span>
+          </div>
+        </div>
+        <div class="tool-group">
+          <p class="tool-label">Content writes <span>6 · off by default</span></p>
+          <div class="tools">
+            <span class="tool">create_content</span><span class="tool">update_content</span><span class="tool">delete_content</span>
+            <span class="tool">update_settings</span><span class="tool">update_menu</span><span class="tool">upload_media</span>
+          </div>
+        </div>
+        <p class="tool-note">Gated tools stay listed but cannot be called: with file writes on and content writes off, 19 of the 25 are reachable.</p>
       </div>
     </div>
   </section>
@@ -308,11 +334,11 @@ section{padding-block:clamp(64px,8vw,104px)}
       </div>
       <div>
         <p class="eyebrow">Built for the way you already work</p>
-        <h2>Everything stays a normal WordPress record.</h2>
-        <p>Content written over MCP is a regular page or post, so it stays editable in the block editor. Menus, settings and media go through normal WordPress APIs. CodeCanvas adds one menu with three destinations — <b>Welcome</b>, <b>Code Studio</b> and <b>MCP&nbsp;&amp;&nbsp;Settings</b> — and does not replace the dashboard, block editor, media library, users, plugins or settings screens.</p>
+        <h2>Everything the site renders is a file.</h2>
+        <p>Content written over MCP is a regular page or post, so it stays editable in the block editor. Menus, settings and media go through normal WordPress APIs. CodeCanvas adds one menu with three destinations — <b>Welcome</b>, <b>Code Studio</b> and <b>MCP&nbsp;&amp;&nbsp;Settings</b> — plus <b>Pages → CodeCanvas Editor</b> for a single page's own code. It does not replace the dashboard, block editor, media library, users, plugins or settings screens.</p>
         <ul class="checklist">
-          <li>No Studio, MCP settings or CodeMirror assets load on public pages.</li>
-          <li>Homepage loads just 4 stylesheets and 2 scripts.</li>
+          <li>No template, content-type or global-code screen — and no such store in the database.</li>
+          <li>Public pages load no Studio, MCP settings or CodeMirror assets.</li>
           <li>Translation-ready, threaded comments, custom logo and menus, wide blocks.</li>
         </ul>
       </div>
@@ -329,17 +355,17 @@ section{padding-block:clamp(64px,8vw,104px)}
         <div class="step">
           <span class="ico" aria-hidden="true">◈</span>
           <h3>Install &amp; activate</h3>
-          <p>Upload <code>codecanvas-1.7.11.zip</code> and activate CodeCanvas. The Welcome screen shows the version, active theme, MCP state and recovery-guard status.</p>
+          <p>Upload <code>codecanvas-2.0.0.zip</code> under <b>Plugins → Add New → Upload Plugin</b> and activate CodeCanvas. The Welcome screen shows the version, website theme, MCP state and recovery-guard status.</p>
         </div>
         <div class="step">
           <span class="ico" aria-hidden="true">◈</span>
-          <h3>Create the child theme</h3>
-          <p>One explicit click in Code Studio creates and activates the <b>CodeCanvas Site</b> child theme and opens <code>wp-content/themes/codecanvas-site</code>. Existing files are never overwritten.</p>
+          <h3>Create the website theme</h3>
+          <p>One explicit click in Code Studio creates and activates the standalone <b>CodeCanvas Site</b> theme and opens <code>wp-content/themes/codecanvas-site</code>. Existing files are never overwritten.</p>
         </div>
         <div class="step">
           <span class="ico" aria-hidden="true">◈</span>
           <h3>Build — optionally with AI</h3>
-          <p>Edit templates, CSS and JS in Studio, or enable MCP and connect Claude Code, Cursor, VS Code or claude.ai with the scope you choose.</p>
+          <p>Edit templates, CSS and JS in Studio, give a page its own HTML/CSS/JS under <b>Pages → CodeCanvas Editor</b>, or enable MCP and connect Claude Code, Cursor, VS Code or claude.ai with the scope you choose.</p>
         </div>
       </div>
     </div>
@@ -349,12 +375,12 @@ section{padding-block:clamp(64px,8vw,104px)}
     <div class="container">
       <div class="intro">
         <h2>Documented end to end.</h2>
-        <p>A full product specification, security model and QA record ship with the theme. The automated suite passes <b>282 tests</b> covering path policy, framework protection, MCP authentication and tools, sanitization, rate limiting and audit redaction.</p>
+        <p>A full product specification, security model and QA record ship inside the plugin. The automated suite passes <b>305 tests</b> covering path policy, framework protection, MCP authentication and tools, sanitization, rate limiting and audit redaction.</p>
       </div>
       <div class="docs">
-        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Getting started</b><span>Install, first run, child theme ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Getting started</b><span>Install, first run, website theme ↗</span></a>
         <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Code Studio</b><span>Interface and file policy ↗</span></a>
-        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Child theme workspace</b><span>Parent/child boundary ↗</span></a>
+        <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Coded pages &amp; tokens</b><span>Per-page HTML, CSS, JS ↗</span></a>
         <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>MCP integration</b><span>Tools, clients, OAuth ↗</span></a>
         <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Developer guide</b><span>Architecture &amp; templates ↗</span></a>
         <a class="doc" href="https://github.com/thesurajdev/CodeCanvas-Studio/tree/main/docs"><b>Install &amp; recovery</b><span>Upgrade, rollback, guard ↗</span></a>
@@ -370,7 +396,7 @@ section{padding-block:clamp(64px,8vw,104px)}
         <h2>CodeCanvas is free, standalone and open source.</h2>
         <p>GPL-2.0-or-later. No required companion plugin, no vendor lock-in, no dashboard takeover. Back it up, try it on staging, and keep your source where it belongs — on the server.</p>
         <div class="cta-row" style="justify-content:center">
-          <a class="btn" href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">Download CodeCanvas 1.7.11 ↗</a>
+          <a class="btn" href="dist/codecanvas-2.0.0.zip">Download CodeCanvas 2.0.0 ↗</a>
           <a class="btn btn-ghost" href="https://surajdev.com/">Visit Suraj Dev ↗</a>
         </div>
       </div>
@@ -386,11 +412,11 @@ section{padding-block:clamp(64px,8vw,104px)}
         <span class="mark" aria-hidden="true">CC</span>
         <span>CodeCanvas<small>by Suraj Dev · Credit to Webot</small></span>
       </a>
-      <p>A code-first WordPress theme: real-file editing in the browser, an optional scoped MCP server for AI clients, and a recovery guard that undoes a bad write. Released under GPL-2.0-or-later.</p>
+      <p>A code-first WordPress plugin: real-file editing in the browser, per-page coded HTML/CSS/JS, an optional scoped MCP server for AI clients, and a recovery guard that undoes a bad write. It generates a real theme for your site. Released under GPL-2.0-or-later.</p>
     </div>
     <div class="footer-links">
       <div>
-        <h4>Theme</h4>
+        <h4>Plugin</h4>
         <a href="#studio">Code Studio</a>
         <a href="#mcp">MCP server</a>
         <a href="#recovery">Recovery guard</a>
@@ -399,14 +425,14 @@ section{padding-block:clamp(64px,8vw,104px)}
       <div>
         <h4>Suraj Dev</h4>
         <a href="https://surajdev.com/">surajdev.com</a>
-        <a href="https://github.com/thesurajdev/CodeCanvas-Studio/blob/main/Download%20Theme/codecanvas-1.7.11.zip">CodeCanvas repository</a>
+        <a href="https://github.com/thesurajdev/CodeCanvas-Studio">CodeCanvas repository</a>
         <a href="https://surajdev.com/">Contact</a>
       </div>
     </div>
   </div>
   <div class="container footer-bottom">
     <p>© <span id="year">2026</span> Suraj Dev · Credit to Webot · GPL-2.0-or-later</p>
-    <p>WordPress is a trademark of the WordPress Foundation. This theme is not affiliated with or endorsed by WordPress.org.</p>
+    <p>WordPress is a trademark of the WordPress Foundation. This plugin is not affiliated with or endorsed by WordPress.org.</p>
   </div>
 </footer>
 
